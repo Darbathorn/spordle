@@ -52,51 +52,94 @@ body {
   font-family: 'Space Grotesk', sans-serif;
   background: var(--bg-deep);
   color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
+  height: 100vh;
+  overflow: hidden;
 }
 
-/* ─── Header ─── */
-header {
-  text-align: center;
-  padding: 14px 20px 10px;
-  border-bottom: 1px solid var(--border);
-  background: linear-gradient(180deg, #0f1530 0%, var(--bg-deep) 100%);
-  position: relative;
+/* ─── Landing Page ─── */
+#landing-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: radial-gradient(ellipse at 50% 30%, #0f1a35 0%, var(--bg-deep) 70%);
 }
-header h1 {
+.landing-inner { text-align: center; padding: 32px 24px; }
+.landing-title {
   font-family: 'Quicksand', sans-serif;
-  font-size: 2.8rem;
+  font-size: 3.6rem;
   font-weight: 700;
-  letter-spacing: 4px;
+  letter-spacing: 5px;
   color: var(--text-bright);
-  text-shadow: 0 0 30px rgba(74,158,255,0.3), 0 0 60px rgba(74,158,255,0.1);
+  text-shadow: 0 0 40px rgba(74,158,255,0.3), 0 0 80px rgba(74,158,255,0.1);
+  margin-bottom: 8px;
 }
-header h1 .sp { color: var(--glow-cyan); text-shadow: 0 0 20px rgba(0,212,255,0.5); }
-header h1 .or { color: var(--glow-blue); }
-header .tagline {
-  font-size: 0.7rem;
+.landing-title .sp { color: var(--glow-cyan); text-shadow: 0 0 20px rgba(0,212,255,0.5); }
+.landing-title .or { color: var(--glow-blue); }
+.landing-tagline {
+  font-size: 0.72rem;
   color: var(--text-muted);
   letter-spacing: 3px;
   text-transform: uppercase;
-  margin-top: 2px;
+  margin-bottom: 52px;
 }
+.landing-btns { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+.landing-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 240px;
+  padding: 18px 24px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-bright);
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: all 0.2s;
+  gap: 4px;
+}
+.landing-btn:hover {
+  border-color: var(--glow-blue);
+  background: rgba(74,158,255,0.08);
+  box-shadow: 0 0 24px rgba(74,158,255,0.12);
+  transform: translateY(-1px);
+}
+.landing-btn.primary {
+  border-color: var(--glow-blue);
+  background: rgba(74,158,255,0.1);
+  box-shadow: 0 0 20px rgba(74,158,255,0.1);
+}
+.landing-btn.primary:hover { background: rgba(74,158,255,0.2); box-shadow: 0 0 32px rgba(74,158,255,0.2); }
+.landing-btn-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-bright);
+}
+.landing-btn-sub { font-size: 0.72rem; color: var(--text-muted); font-weight: 400; }
 
-/* ─── Layout ─── */
+/* ─── Game Page Layout ─── */
+#game-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 .game-container {
   display: flex;
-  max-width: 1500px;
-  margin: 0 auto;
-  min-height: calc(100vh - 70px);
+  flex: 1;
+  overflow: hidden;
 }
 .left-panel {
-  width: 370px;
-  min-width: 370px;
-  padding: 20px;
+  width: 360px;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
   border-right: 1px solid var(--border);
   background: var(--bg-panel);
-  overflow-y: auto;
-  max-height: calc(100vh - 70px);
+  overflow: hidden;
 }
 .left-panel::-webkit-scrollbar { width: 6px; }
 .left-panel::-webkit-scrollbar-track { background: transparent; }
@@ -108,22 +151,87 @@ header .tagline {
   background: radial-gradient(ellipse at 50% 40%, #0f1a35 0%, var(--bg-deep) 70%);
 }
 
+/* ─── Game Topbar ─── */
+.game-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.back-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: sans-serif;
+  transition: all 0.15s;
+}
+.back-btn:hover { border-color: var(--glow-blue); color: var(--glow-blue); }
+.topbar-info { flex: 1; min-width: 0; }
+.topbar-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.info-circle-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid var(--glow-cyan);
+  background: rgba(0,212,255,0.08);
+  color: var(--glow-cyan);
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: 0 0 8px rgba(0,212,255,0.15);
+  flex-shrink: 0;
+}
+.info-circle-btn:hover { background: rgba(0,212,255,0.18); box-shadow: 0 0 16px rgba(0,212,255,0.3); }
+.table-top-btn {
+  padding: 5px 10px;
+  font-size: 0.72rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: rgba(13,18,37,0.8);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.table-top-btn:hover { border-color: var(--glow-blue); color: var(--glow-blue); }
+
 /* ─── Game Info ─── */
 .game-title {
   font-family: 'Quicksand', sans-serif;
-  font-size: 1.4rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--text-bright);
-  margin-bottom: 3px;
+  margin-bottom: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .game-subtitle {
-  font-size: 0.82rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
-  margin-bottom: 16px;
 }
 
 /* ─── Guess Input ─── */
-.guess-area { position: relative; margin-bottom: 20px; }
+.guess-area { position: relative; padding: 14px 14px 0; flex-shrink: 0; }
 .input-row { display: flex; gap: 8px; }
 .guess-input {
   flex: 1;
@@ -320,33 +428,55 @@ header .tagline {
 .ac-item .sci { font-style: italic; color: var(--text); }
 .ac-item .com { color: var(--text-muted); font-size: 0.78rem; }
 
-/* ─── Info Card ─── */
-.info-card {
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
+/* ─── Info Modal ─── */
+.info-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+}
+.info-modal.open { display: flex; align-items: flex-end; justify-content: stretch; }
+.info-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5,8,20,0.6);
+  backdrop-filter: blur(4px);
+}
+.info-modal-sheet {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
   background: var(--bg-card);
-  padding: 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(74,158,255,0.05);
-  transition: border-color 0.3s, box-shadow 0.3s;
+  border: 1.5px solid var(--border-glow);
+  border-radius: 16px 16px 0 0;
+  padding: 20px 20px 32px;
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
+  animation: slideUp 0.22s ease-out;
 }
-.info-card:hover {
-  border-color: var(--border-glow);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 12px rgba(74,158,255,0.06);
+@keyframes slideUp {
+  from { transform: translateY(60px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
-.info-card .info-header {
+.info-modal-header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 2px;
+  align-items: flex-start;
+  margin-bottom: 14px;
 }
-.info-card h3 {
+.info-modal-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.info-modal-header h3 {
   font-family: 'Quicksand', sans-serif;
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--text-bright);
 }
-.info-card .rank-badge {
+.rank-badge {
   font-size: 0.68rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -357,32 +487,54 @@ header .tagline {
   color: var(--glow-blue);
   border: 1px solid rgba(74,158,255,0.2);
 }
-.info-card .desc {
+.info-modal-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.info-modal-close:hover { color: var(--text-bright); border-color: var(--glow-blue); }
+.info-modal-sheet .desc {
   font-size: 0.9rem;
   line-height: 1.6;
   color: var(--text);
-  margin-top: 8px;
+  margin-bottom: 12px;
 }
-.info-card .wiki-link {
+.info-modal-sheet .lca-note {
+  font-size: 0.82rem;
+  color: var(--hint-amber);
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  background: rgba(255,184,74,0.08);
+  border-radius: 6px;
+  border: 1px solid rgba(255,184,74,0.2);
+}
+.info-modal-sheet .wiki-link {
   display: inline-block;
-  margin-top: 10px;
   color: var(--glow-cyan);
   font-size: 0.78rem;
   text-decoration: none;
   font-weight: 500;
-  opacity: 0.7;
+  opacity: 0.8;
   transition: opacity 0.15s;
 }
-.info-card .wiki-link:hover { opacity: 1; text-decoration: underline; }
-.info-card .lca-note {
-  font-size: 0.78rem;
-  color: var(--hint-amber);
-  margin-top: 6px;
-  font-style: italic;
-}
+.info-modal-sheet .wiki-link:hover { opacity: 1; text-decoration: underline; }
 
 /* ─── Guess Log ─── */
-.guess-log { margin-top: 16px; }
+.guess-log {
+  padding: 12px 14px;
+  overflow-y: auto;
+  flex: 1;
+}
 .guess-log h4 {
   font-size: 0.75rem;
   font-weight: 600;
@@ -426,34 +578,6 @@ header .tagline {
   inset: 0;
   pointer-events: none;
   z-index: 10;
-}
-
-/* ─── Bottom Controls ─── */
-.bottom-controls {
-  position: absolute;
-  bottom: 16px;
-  right: 20px;
-  display: flex;
-  gap: 10px;
-  z-index: 20;
-}
-.bottom-controls button {
-  padding: 6px 14px;
-  font-size: 0.78rem;
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 500;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: rgba(13,18,37,0.8);
-  color: var(--text-muted);
-  cursor: pointer;
-  backdrop-filter: blur(6px);
-  transition: all 0.15s;
-}
-.bottom-controls button:hover {
-  border-color: var(--glow-blue);
-  color: var(--glow-blue);
-  box-shadow: 0 0 10px rgba(74,158,255,0.1);
 }
 
 /* ─── Table ─── */
@@ -542,48 +666,33 @@ header .tagline {
 @media (max-width: 900px) {
   .game-container { flex-direction: column; }
   .left-panel {
-    width: 100%; min-width: auto;
-    border-right: none; border-bottom: 1px solid var(--border);
-    max-height: none;
+    width: 100%;
+    min-width: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    overflow: visible;
   }
-  .right-panel { min-height: 500px; }
+  .right-panel { flex: 1; min-height: 0; }
 }
 
 @media (max-width: 540px) {
-  header { padding: 10px 16px 8px; }
-  header h1 { font-size: 2rem; letter-spacing: 2px; }
-  header .tagline { font-size: 0.65rem; }
-
-  .left-panel { padding: 14px 12px; }
-
-  .mode-switcher { margin-bottom: 12px; }
-  .mode-btn { padding: 8px 0; font-size: 0.72rem; }
-
-  .game-title { font-size: 1.1rem; }
-  .game-subtitle { font-size: 0.75rem; }
-
-  .guess-input { padding: 11px 12px; font-size: 0.9rem; }
-  .guess-btn { padding: 11px 14px; font-size: 0.9rem; }
-
-  .hint-btn { padding: 6px 12px; font-size: 0.75rem; }
-  .remaining { font-size: 0.73rem; }
-
-  .right-panel { min-height: 380px; }
-
-  /* Larger touch targets for tree nodes */
-  .node circle { r: 8px; }
+  .landing-title { font-size: 2.8rem; letter-spacing: 3px; }
+  .landing-tagline { margin-bottom: 36px; }
+  .landing-btn { width: 200px; padding: 14px 20px; }
+  .game-topbar { padding: 8px 10px; gap: 6px; }
+  .guess-area { padding: 10px 10px 0; }
+  .guess-input { padding: 10px 10px; font-size: 0.88rem; }
+  .guess-btn { padding: 10px 12px; font-size: 0.88rem; }
+  .hint-btn { padding: 5px 10px; font-size: 0.73rem; }
+  .remaining { font-size: 0.72rem; }
 }
 
-/* Safe-area insets for notched phones */
+/* Safe-area insets */
 @supports (padding: env(safe-area-inset-bottom)) {
-  body {
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-  }
-  header {
-    padding-top: calc(14px + env(safe-area-inset-top));
-  }
+  .landing-inner { padding-bottom: calc(32px + env(safe-area-inset-bottom)); }
+  .game-topbar { padding-top: calc(10px + env(safe-area-inset-top)); }
+  .info-modal-sheet { padding-bottom: calc(32px + env(safe-area-inset-bottom)); }
 }
 
 /* ─── SVG Glow Filters (defined in SVG defs) ─── */
@@ -591,70 +700,90 @@ header .tagline {
 </head>
 <body>
 
-<header>
-  <h1><span class="sp">Sp</span><span class="or">or</span>dle</h1>
-  <div class="tagline">Fungal phylogeny guessing game</div>
-</header>
+<!-- Landing Page -->
+<div id="landing-page">
+  <div class="landing-inner">
+    <h1 class="landing-title"><span class="sp">Sp</span><span class="or">or</span>dle</h1>
+    <p class="landing-tagline">Fungal phylogeny guessing game</p>
+    <div class="landing-btns">
+      <button class="landing-btn primary" onclick="startGame('daily')">
+        <span class="landing-btn-label">Daily</span>
+        <span class="landing-btn-sub">One puzzle per day</span>
+      </button>
+      <button class="landing-btn" onclick="startGame('practice')">
+        <span class="landing-btn-label">Practice</span>
+        <span class="landing-btn-sub">Unlimited puzzles</span>
+      </button>
+    </div>
+  </div>
+</div>
 
-<div class="game-container">
-  <div class="left-panel">
-    <div class="mode-switcher">
-      <button class="mode-btn active" id="mode-daily" onclick="switchMode('daily')">Daily</button>
-      <button class="mode-btn" id="mode-practice" onclick="switchMode('practice')">Practice</button>
+<!-- Game Page -->
+<div id="game-page" style="display:none">
+  <div class="game-container">
+    <div class="left-panel">
+
+      <div class="game-topbar">
+        <button class="back-btn" onclick="goToLanding()" title="Back to menu">&#8249;</button>
+        <div class="topbar-info">
+          <div class="game-title" id="game-title">Fungus #1</div>
+          <div class="game-subtitle" id="game-subtitle">Guess any species to begin!</div>
+          <div id="daily-status"></div>
+        </div>
+        <div class="topbar-actions">
+          <button class="info-circle-btn" id="info-circle-btn" onclick="openInfoModal()" title="Species info">i</button>
+          <button class="table-top-btn" id="table-btn" onclick="toggleTable()">Table</button>
+        </div>
+      </div>
+
+      <div class="guess-area" id="guess-area">
+        <div class="input-row">
+          <input class="guess-input" type="text" id="guess-input"
+                 placeholder="Type a fungus name..." autocomplete="off" spellcheck="false" />
+          <button class="guess-btn" id="guess-btn">Guess</button>
+        </div>
+        <div class="meta-row">
+          <span class="remaining" id="remaining">20 remaining</span>
+          <button class="hint-btn" id="hint-btn" title="Spend 3 guesses to reveal the next rank on the mystery path">Hint (-3)</button>
+        </div>
+        <div class="action-row">
+          <button class="giveup-btn" id="giveup-btn" onclick="giveUp()">Give Up</button>
+        </div>
+        <div class="ac-dropdown" id="ac-dropdown"></div>
+      </div>
+
+      <div class="guess-log" id="guess-log" style="display:none">
+        <h4>Your Guesses</h4>
+        <div id="log-entries"></div>
+      </div>
     </div>
 
-    <div class="game-title" id="game-title">Fungus #1</div>
-    <div class="game-subtitle" id="game-subtitle">Guess any species to begin!</div>
-    <div id="daily-status"></div>
-
-    <div class="guess-area" id="guess-area">
-      <div class="input-row">
-        <input class="guess-input" type="text" id="guess-input"
-               placeholder="Type a fungus name..." autocomplete="off" spellcheck="false" />
-        <button class="guess-btn" id="guess-btn">Guess</button>
+    <div class="right-panel" id="right-panel">
+      <canvas id="spore-canvas"></canvas>
+      <svg id="tree-svg"></svg>
+      <div class="table-overlay" id="table-overlay">
+        <table>
+          <thead><tr><th>#</th><th>Guess</th><th>Shared clade</th><th>Dist</th></tr></thead>
+          <tbody id="table-body"></tbody>
+        </table>
       </div>
-      <div class="meta-row">
-        <span class="remaining" id="remaining">20 remaining</span>
-        <button class="hint-btn" id="hint-btn" title="Spend 3 guesses to reveal the next rank on the mystery path">Hint (-3)</button>
-      </div>
-      <div class="action-row">
-        <button class="giveup-btn" id="giveup-btn" onclick="giveUp()">Give Up</button>
-      </div>
-      <div class="ac-dropdown" id="ac-dropdown"></div>
-    </div>
-
-    <div class="info-card" id="info-card">
-      <div class="info-header">
-        <h3 id="info-title">Fungi</h3>
-        <span class="rank-badge" id="info-rank">Kingdom</span>
-      </div>
-      <div class="desc" id="info-desc">
-        Fungi are eukaryotic organisms that include yeasts, molds, mushrooms, and lichens.
-        They form a kingdom separate from plants, animals, and bacteria. Fungi absorb
-        nutrients by secreting enzymes externally and play critical roles as decomposers,
-        symbionts, and pathogens in all ecosystems.
-      </div>
-      <div class="lca-note" id="info-lca-note" style="display:none"></div>
-      <a class="wiki-link" id="info-wiki" href="https://en.wikipedia.org/wiki/Fungus" target="_blank">From Wikipedia</a>
-    </div>
-
-    <div class="guess-log" id="guess-log" style="display:none">
-      <h4>Your Guesses</h4>
-      <div id="log-entries"></div>
     </div>
   </div>
 
-  <div class="right-panel" id="right-panel">
-    <canvas id="spore-canvas"></canvas>
-    <svg id="tree-svg"></svg>
-    <div class="bottom-controls">
-      <button id="table-btn" onclick="toggleTable()">Show table</button>
-    </div>
-    <div class="table-overlay" id="table-overlay">
-      <table>
-        <thead><tr><th>#</th><th>Guess</th><th>Shared clade</th><th>Dist</th></tr></thead>
-        <tbody id="table-body"></tbody>
-      </table>
+  <!-- Info Modal (bottom sheet) -->
+  <div class="info-modal" id="info-modal">
+    <div class="info-modal-backdrop" onclick="closeInfoModal()"></div>
+    <div class="info-modal-sheet">
+      <div class="info-modal-header">
+        <div class="info-modal-title-row">
+          <h3 id="info-title">Fungi</h3>
+          <span class="rank-badge" id="info-rank">Kingdom</span>
+        </div>
+        <button class="info-modal-close" onclick="closeInfoModal()">&#10005;</button>
+      </div>
+      <div class="desc" id="info-desc">Fungi are eukaryotic organisms that include yeasts, molds, mushrooms, and lichens. They form a kingdom separate from plants, animals, and bacteria. Fungi absorb nutrients by secreting enzymes externally and play critical roles as decomposers, symbionts, and pathogens in all ecosystems.</div>
+      <div class="lca-note" id="info-lca-note" style="display:none"></div>
+      <a class="wiki-link" id="info-wiki" href="https://en.wikipedia.org/wiki/Fungus" target="_blank">From Wikipedia &#8594;</a>
     </div>
   </div>
 </div>
@@ -879,10 +1008,25 @@ function isDailyComplete(){
 function switchMode(mode){
   document.getElementById('game-overlay').classList.remove('active');
   gameMode=mode;
-  document.getElementById('mode-daily').classList.toggle('active',mode==='daily');
-  document.getElementById('mode-practice').classList.toggle('active',mode==='practice');
   newGame();
 }
+
+function startGame(mode){
+  document.getElementById('landing-page').style.display='none';
+  document.getElementById('game-page').style.display='flex';
+  gameMode=mode;
+  newGame();
+}
+
+function goToLanding(){
+  document.getElementById('game-overlay').classList.remove('active');
+  closeInfoModal();
+  document.getElementById('game-page').style.display='none';
+  document.getElementById('landing-page').style.display='flex';
+}
+
+function openInfoModal(){ document.getElementById('info-modal').classList.add('open'); }
+function closeInfoModal(){ document.getElementById('info-modal').classList.remove('open'); }
 
 function updateDailyStatus(){
   const el=document.getElementById('daily-status');
@@ -1109,7 +1253,7 @@ function renderTree(){
       .attr('fill','#1a3a6e').attr('stroke','#4a9eff').attr('stroke-width',1.5).attr('filter','url(#glow)');
     rg.append('text').text('Fungi').attr('text-anchor','middle').attr('dominant-baseline','central')
       .attr('fill','#b8d4ff').attr('font-family','Quicksand, sans-serif').attr('font-size','13px').attr('font-weight','600');
-    rg.style('cursor','pointer').on('click',()=>showInfo('Fungi',0));
+    rg.style('cursor','pointer').on('click',()=>showInfo('Fungi',0,true));
 
     // Glowing dashed line
     g.append('line').attr('x1',W/2).attr('y1',76).attr('x2',W/2).attr('y2',220)
@@ -1228,7 +1372,7 @@ function renderTree(){
       g.append('text').text(d.name).attr('text-anchor','middle').attr('dominant-baseline','central')
         .attr('fill','#b8d4ff').attr('font-family','Quicksand, sans-serif').attr('font-size','12px').attr('font-weight','600')
         .style('pointer-events','none');
-      g.style('cursor','pointer').on('click',()=>showInfo(d.name,d.rank));
+      g.style('cursor','pointer').on('click',()=>showInfo(d.name,d.rank,true));
     } else if(d.type==='answer'){
       g.append('rect').attr('x',-w/2).attr('y',-h/2).attr('width',w).attr('height',h).attr('rx',6)
         .attr('fill','#0a3025').attr('stroke','#4aff9a').attr('stroke-width',2).attr('filter','url(#glow-bright)');
@@ -1328,8 +1472,8 @@ function submitGuess(){
   input.value='';closeAC();
   document.getElementById('remaining').textContent=`${remaining} remaining`;
   if(!gameOver)document.getElementById('game-subtitle').textContent='Enter your next guess.';
-  if(isWin){showInfo(guess.sci,7);document.getElementById('info-lca-note').style.display='block';document.getElementById('info-lca-note').textContent='You found it!'}
-  else{showInfo(lca.name,lca.depth);document.getElementById('info-lca-note').style.display='block';document.getElementById('info-lca-note').textContent=`The answer and ${guess.common} have this in common.`}
+  if(isWin){showInfo(guess.sci,7,true);document.getElementById('info-lca-note').style.display='block';document.getElementById('info-lca-note').textContent='You found it!'}
+  else{showInfo(lca.name,lca.depth,true);document.getElementById('info-lca-note').style.display='block';document.getElementById('info-lca-note').textContent=`The answer and ${guess.common} have this in common.`}
   addLogEntry(guess);renderTree();
   if(gameOver){
     if(gameMode==='daily'){
@@ -1371,7 +1515,7 @@ function useHint(){
   const next=deepest+1;
   if(next<mystery[1].length-1){
     revealedHintDepths.add(next);
-    showInfo(mystery[1][next],next);
+    showInfo(mystery[1][next],next,true);
     document.getElementById('info-lca-note').style.display='block';
     document.getElementById('info-lca-note').textContent=`Hint: the mystery fungus belongs to ${RANK_NAMES[next]} ${mystery[1][next]}`;
     renderTree();
@@ -1383,12 +1527,13 @@ function useHint(){
   }
 }
 
-function showInfo(t,r){
+function showInfo(t,r,autoOpen){
   document.getElementById('info-title').textContent=t;
   document.getElementById('info-rank').textContent=RANK_NAMES[r]||'Clade';
   document.getElementById('info-desc').textContent=DESCRIPTIONS[t]||`${t} is a taxonomic group within the fungal kingdom.`;
   document.getElementById('info-wiki').href=`https://en.wikipedia.org/wiki/${encodeURIComponent(t.replace(/ /g,'_'))}`;
   document.getElementById('info-lca-note').style.display='none';
+  if(autoOpen) openInfoModal();
 }
 
 function addLogEntry(guess){
@@ -1396,7 +1541,7 @@ function addLogEntry(guess){
   const entries=document.getElementById('log-entries');
   const div=document.createElement('div');div.className='log-entry';
   div.innerHTML=`<span class="name">${guess.common}</span><span class="lca">${guess.lcaRank}: ${guess.lca}</span>`;
-  div.addEventListener('click',()=>{showInfo(guess.lca,guess.lcaDepth);document.getElementById('info-lca-note').style.display='block';document.getElementById('info-lca-note').textContent=`The answer and ${guess.common} have this in common.`});
+  div.addEventListener('click',()=>{showInfo(guess.lca,guess.lcaDepth,true);document.getElementById('info-lca-note').style.display='block';document.getElementById('info-lca-note').textContent=`The answer and ${guess.common} have this in common.`});
   entries.insertBefore(div,entries.firstChild);
   const tr=document.createElement('tr');
   tr.innerHTML=`<td>${guesses.length}</td><td>${guess.common}</td><td>${guess.lca}</td><td>${guess.distance}</td>`;
@@ -1432,7 +1577,7 @@ function showOverlay(title,html,won){
 function toggleTable(){
   const t=document.getElementById('table-overlay');
   const open=t.classList.toggle('open');
-  document.getElementById('table-btn').textContent=open?'Hide table':'Show table';
+  document.getElementById('table-btn').textContent=open?'Hide':'Table';
 }
 
 function newGame(){
@@ -1487,7 +1632,7 @@ function newGame(){
   document.getElementById('guess-log').style.display='none';
   document.getElementById('table-body').innerHTML='';
   document.getElementById('table-overlay').classList.remove('open');
-  document.getElementById('table-btn').textContent='Show table';
+  document.getElementById('table-btn').textContent='Table';
   showInfo('Fungi',0);
   updateDailyStatus();
   spores=[];
@@ -1534,8 +1679,7 @@ window.addEventListener('resize',()=>{resizeCanvas();if(guesses.length>0||reveal
 // ═══════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════
-initSvg();
-newGame();
+// Game starts when user selects a mode from the landing page
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
