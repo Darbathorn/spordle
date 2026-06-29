@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Spordle</title>
+
+<!-- PWA / mobile app meta -->
+<meta name="theme-color" content="#0a0e1a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Spordle">
+<meta name="application-name" content="Spordle">
+<meta name="description" content="Fungal phylogeny guessing game — identify the mystery fungus from its evolutionary tree.">
+
+<!-- Icons -->
+<link rel="icon" href="/assets/icon-D2IAsxA1.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/icon-D2IAsxA1.svg">
+
+<!-- Manifest -->
+<link rel="manifest" href="/assets/manifest-DJhjgNPQ.json">
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-deep: #0a0e1a;
+  --bg-panel: #0d1225;
+  --bg-card: #111833;
+  --bg-input: #151c38;
+  --border: #1e2a52;
+  --border-glow: #2a4a8a;
+  --text: #c8d6f0;
+  --text-muted: #6b7db0;
+  --text-bright: #e4ecff;
+  --glow-blue: #4a9eff;
+  --glow-cyan: #00d4ff;
+  --glow-soft: #3a7ae8;
+  --glow-purple: #7a5af5;
+  --glow-white: #b8d4ff;
+  --accent: #5eaaff;
+  --accent-hover: #7bbfff;
+  --win-green: #4aff9a;
+  --hint-amber: #ffb84a;
+}
+
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: var(--bg-deep);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ─── Landing Page ─── */
+
+#landing-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: radial-gradient(ellipse at 50% 30%, #0f1a35 0%, var(--bg-deep) 70%);
+}
+
+.landing-inner { text-align: center; padding: 32px 24px; }
+
+.landing-title {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 3.6rem;
+  font-weight: 700;
+  letter-spacing: 5px;
+  color: var(--text-bright);
+  text-shadow: 0 0 40px rgba(74,158,255,0.3), 0 0 80px rgba(74,158,255,0.1);
+  margin-bottom: 8px;
+}
+
+.landing-title .sp { color: var(--glow-cyan); text-shadow: 0 0 20px rgba(0,212,255,0.5); }
+
+.landing-title .or { color: var(--glow-blue); }
+
+.landing-tagline {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 52px;
+}
+
+.landing-btns { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+
+.landing-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 240px;
+  padding: 18px 24px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-bright);
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: all 0.2s;
+  gap: 4px;
+}
+
+.landing-btn:hover {
+  border-color: var(--glow-blue);
+  background: rgba(74,158,255,0.08);
+  box-shadow: 0 0 24px rgba(74,158,255,0.12);
+  transform: translateY(-1px);
+}
+
+.landing-btn.primary {
+  border-color: var(--glow-blue);
+  background: rgba(74,158,255,0.1);
+  box-shadow: 0 0 20px rgba(74,158,255,0.1);
+}
+
+.landing-btn.primary:hover { background: rgba(74,158,255,0.2); box-shadow: 0 0 32px rgba(74,158,255,0.2); }
+
+.landing-btn-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-bright);
+}
+
+.landing-btn-sub { font-size: 0.72rem; color: var(--text-muted); font-weight: 400; }
+
+/* ─── Game Page Layout ─── */
+
+#game-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.game-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.left-panel {
+  width: 360px;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  background: var(--bg-panel);
+  overflow: hidden;
+}
+
+.left-panel::-webkit-scrollbar { width: 6px; }
+
+.left-panel::-webkit-scrollbar-track { background: transparent; }
+
+.left-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.right-panel {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 40%, #0f1a35 0%, var(--bg-deep) 70%);
+}
+
+/* ─── Game Topbar ─── */
+
+.game-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.back-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: sans-serif;
+  transition: all 0.15s;
+}
+
+.back-btn:hover { border-color: var(--glow-blue); color: var(--glow-blue); }
+
+.topbar-info { flex: 1; min-width: 0; }
+
+.topbar-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+.info-circle-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid var(--glow-cyan);
+  background: rgba(0,212,255,0.08);
+  color: var(--glow-cyan);
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: 0 0 8px rgba(0,212,255,0.15);
+  flex-shrink: 0;
+}
+
+.info-circle-btn:hover { background: rgba(0,212,255,0.18); box-shadow: 0 0 16px rgba(0,212,255,0.3); }
+
+.table-top-btn {
+  padding: 5px 10px;
+  font-size: 0.72rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: rgba(13,18,37,0.8);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.table-top-btn:hover { border-color: var(--glow-blue); color: var(--glow-blue); }
+
+/* ─── Game Info ─── */
+
+.game-title {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.game-subtitle {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* ─── Guess Input ─── */
+
+.guess-area { position: relative; padding: 14px 14px 0; flex-shrink: 0; }
+
+.input-row { display: flex; gap: 8px; }
+
+.guess-input {
+  flex: 1;
+  padding: 10px 14px;
+  font-size: 0.93rem;
+  font-family: 'Space Grotesk', sans-serif;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-input);
+  color: var(--text-bright);
+  outline: none;
+  transition: all 0.25s;
+}
+
+.guess-input::placeholder { color: var(--text-muted); opacity: 0.6; }
+
+.guess-input:focus {
+  border-color: var(--glow-blue);
+  box-shadow: 0 0 12px rgba(74,158,255,0.2), 0 0 4px rgba(74,158,255,0.3) inset;
+}
+
+.guess-input.error {
+  border-color: #ff4a6a;
+  box-shadow: 0 0 12px rgba(255,74,106,0.25);
+}
+
+.guess-btn {
+  padding: 10px 20px;
+  font-size: 0.93rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  border: 1.5px solid var(--glow-blue);
+  border-radius: 8px;
+  background: rgba(74,158,255,0.12);
+  color: var(--glow-blue);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.guess-btn:hover:not(:disabled) {
+  background: rgba(74,158,255,0.25);
+  box-shadow: 0 0 16px rgba(74,158,255,0.2);
+}
+
+.guess-btn:disabled { opacity: 0.3; cursor: default; }
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.remaining {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.hint-btn {
+  padding: 5px 14px;
+  font-size: 0.78rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  background: rgba(255,184,74,0.06);
+  color: var(--hint-amber);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.hint-btn:hover:not(:disabled) {
+  border-color: var(--hint-amber);
+  background: rgba(255,184,74,0.12);
+  box-shadow: 0 0 12px rgba(255,184,74,0.15);
+}
+
+.hint-btn:disabled { opacity: 0.25; cursor: default; }
+
+/* ─── Mode Switcher ─── */
+
+.mode-switcher {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1.5px solid var(--border);
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 9px 0;
+  font-size: 0.78rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border: none;
+  background: var(--bg-input);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.mode-btn:first-child { border-right: 1px solid var(--border); }
+
+.mode-btn.active {
+  background: rgba(74,158,255,0.12);
+  color: var(--glow-blue);
+  box-shadow: inset 0 0 12px rgba(74,158,255,0.08);
+}
+
+.mode-btn:hover:not(.active) {
+  background: rgba(74,158,255,0.06);
+  color: var(--text);
+}
+
+/* ─── Action Buttons Row ─── */
+
+.action-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.giveup-btn {
+  padding: 5px 12px;
+  font-size: 0.75rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  background: rgba(255,74,106,0.06);
+  color: #ff6b85;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.giveup-btn:hover:not(:disabled) {
+  border-color: #ff4a6a;
+  background: rgba(255,74,106,0.12);
+  box-shadow: 0 0 12px rgba(255,74,106,0.12);
+}
+
+.giveup-btn:disabled { opacity: 0.25; cursor: default; }
+
+/* ─── Daily Score Badge ─── */
+
+.daily-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  background: rgba(74,158,255,0.08);
+  border: 1px solid rgba(74,158,255,0.15);
+  font-size: 0.75rem;
+  color: var(--glow-cyan);
+}
+
+.daily-badge .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--glow-cyan);
+  box-shadow: 0 0 6px var(--glow-cyan);
+}
+
+.daily-complete {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(74,255,154,0.06);
+  border: 1px solid rgba(74,255,154,0.15);
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--win-green);
+}
+
+.daily-complete .score { font-size: 1.4rem; font-weight: 700; }
+
+/* ─── Autocomplete ─── */
+
+.ac-dropdown {
+  position: absolute;
+  top: calc(100% - 28px);
+  left: 0;
+  right: 74px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-glow);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 100;
+  display: none;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.ac-dropdown.open { display: block; }
+
+.ac-dropdown::-webkit-scrollbar { width: 5px; }
+
+.ac-dropdown::-webkit-scrollbar-thumb { background: var(--border-glow); border-radius: 3px; }
+
+.ac-item {
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(30,42,82,0.5);
+  transition: background 0.1s;
+}
+
+.ac-item:last-child { border-bottom: none; }
+
+.ac-item:hover, .ac-item.active { background: rgba(74,158,255,0.1); }
+
+.ac-item .sci { font-style: italic; color: var(--text); }
+
+.ac-item .com { color: var(--text-muted); font-size: 0.78rem; }
+
+/* ─── Info Modal ─── */
+
+.info-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+}
+
+.info-modal.open { display: flex; align-items: flex-end; justify-content: stretch; }
+
+.info-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5,8,20,0.6);
+  backdrop-filter: blur(4px);
+}
+
+.info-modal-sheet {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-glow);
+  border-radius: 16px 16px 0 0;
+  padding: 20px 20px 32px;
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
+  animation: slideUp 0.22s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(60px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.info-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.info-modal-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.info-modal-header h3 {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-bright);
+}
+
+.rank-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(74,158,255,0.1);
+  color: var(--glow-blue);
+  border: 1px solid rgba(74,158,255,0.2);
+}
+
+.info-modal-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.info-modal-close:hover { color: var(--text-bright); border-color: var(--glow-blue); }
+
+.info-modal-sheet .desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.info-modal-sheet .lca-note {
+  font-size: 0.82rem;
+  color: var(--hint-amber);
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  background: rgba(255,184,74,0.08);
+  border-radius: 6px;
+  border: 1px solid rgba(255,184,74,0.2);
+}
+
+.info-modal-sheet .wiki-link {
+  display: inline-block;
+  color: var(--glow-cyan);
+  font-size: 0.78rem;
+  text-decoration: none;
+  font-weight: 500;
+  opacity: 0.8;
+  transition: opacity 0.15s;
+}
+
+.info-modal-sheet .wiki-link:hover { opacity: 1; text-decoration: underline; }
+
+/* ─── Guess Log ─── */
+
+.guess-log {
+  padding: 12px 14px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.guess-log h4 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.log-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 10px;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  margin-bottom: 3px;
+  background: rgba(17,24,51,0.6);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.log-entry:hover {
+  border-color: var(--border-glow);
+  background: rgba(74,158,255,0.05);
+  box-shadow: 0 0 8px rgba(74,158,255,0.08);
+}
+
+.log-entry .name { font-weight: 600; color: var(--text-bright); }
+
+.log-entry .lca { color: var(--glow-cyan); font-size: 0.73rem; }
+
+/* ─── Tree SVG ─── */
+
+#tree-svg {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+#tree-svg:active { cursor: grabbing; }
+
+/* ─── Spore Canvas ─── */
+
+#spore-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ─── Table ─── */
+
+.table-overlay {
+  display: none;
+  position: absolute;
+  bottom: 50px; right: 20px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-glow);
+  border-radius: 10px;
+  padding: 12px;
+  max-height: 300px;
+  overflow: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  z-index: 50;
+  min-width: 360px;
+}
+
+.table-overlay.open { display: block; }
+
+.table-overlay table { border-collapse: collapse; width: 100%; font-size: 0.78rem; }
+
+.table-overlay th, .table-overlay td {
+  padding: 5px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.table-overlay th {
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.5px;
+}
+
+.table-overlay td { color: var(--text); }
+
+/* ─── Game Overlay ─── */
+
+.game-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(5,8,20,0.7);
+  backdrop-filter: blur(6px);
+  z-index: 200;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-overlay.active { display: flex; }
+
+.overlay-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-glow);
+  border-radius: 16px;
+  padding: 36px 44px;
+  text-align: center;
+  max-width: 440px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(74,158,255,0.1);
+}
+
+.overlay-card h2 {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.8rem;
+  margin-bottom: 12px;
+  color: var(--text-bright);
+  text-shadow: 0 0 20px rgba(74,158,255,0.3);
+}
+
+.overlay-card p {
+  font-size: 0.93rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  color: var(--text);
+}
+
+.overlay-card .play-btn {
+  padding: 12px 32px;
+  font-size: 1rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  border: 1.5px solid var(--glow-blue);
+  border-radius: 8px;
+  background: rgba(74,158,255,0.15);
+  color: var(--glow-blue);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.overlay-card .play-btn:hover {
+  background: rgba(74,158,255,0.3);
+  box-shadow: 0 0 20px rgba(74,158,255,0.25);
+}
+
+/* ─── Responsive ─── */
+
+@media (max-width: 900px) {
+  .game-container { flex-direction: column; }
+  .left-panel {
+    width: 100%;
+    min-width: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    overflow: visible;
+  }
+  .right-panel { flex: 1; min-height: 0; }
+}
+
+@media (max-width: 540px) {
+  .landing-title { font-size: 2.8rem; letter-spacing: 3px; }
+  .landing-tagline { margin-bottom: 36px; }
+  .landing-btn { width: 200px; padding: 14px 20px; }
+  .game-topbar { padding: 8px 10px; gap: 6px; }
+  .guess-area { padding: 10px 10px 0; }
+  .guess-input { padding: 10px 10px; font-size: 0.88rem; }
+  .guess-btn { padding: 10px 12px; font-size: 0.88rem; }
+  .hint-btn { padding: 5px 10px; font-size: 0.73rem; }
+  .remaining { font-size: 0.72rem; }
+}
+
+/* Safe-area insets */
+
+@supports (padding: env(safe-area-inset-bottom)) {
+  .landing-inner { padding-bottom: calc(32px + env(safe-area-inset-bottom)); }
+  .game-topbar { padding-top: calc(10px + env(safe-area-inset-top)); }
+  .info-modal-sheet { padding-bottom: calc(32px + env(safe-area-inset-bottom)); }
+}
+
+/* ─── SVG Glow Filters (defined in SVG defs) ─── */
+</style>
+</head>
+<body>
+
+<!-- Landing Page -->
+<div id="landing-page">
+  <div class="landing-inner">
+    <h1 class="landing-title"><span class="sp">Sp</span><span class="or">or</span>dle</h1>
+    <p class="landing-tagline">Fungal phylogeny guessing game</p>
+    <div class="landing-btns">
+      <button class="landing-btn primary" onclick="startGame('daily')">
+        <span class="landing-btn-label">Daily</span>
+        <span class="landing-btn-sub">One puzzle per day</span>
+      </button>
+      <button class="landing-btn" onclick="startGame('practice')">
+        <span class="landing-btn-label">Practice</span>
+        <span class="landing-btn-sub">Unlimited puzzles</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Game Page -->
+<div id="game-page" style="display:none">
+  <div class="game-container">
+    <div class="left-panel">
+
+      <div class="game-topbar">
+        <button class="back-btn" onclick="goToLanding()" title="Back to menu">&#8249;</button>
+        <div class="topbar-info">
+          <div class="game-title" id="game-title">Fungus #1</div>
+          <div class="game-subtitle" id="game-subtitle">Guess any species to begin!</div>
+          <div id="daily-status"></div>
+        </div>
+        <div class="topbar-actions">
+          <button class="info-circle-btn" id="info-circle-btn" onclick="openInfoModal()" title="Species info">i</button>
+          <button class="table-top-btn" id="table-btn" onclick="toggleTable()">Table</button>
+        </div>
+      </div>
+
+      <div class="guess-area" id="guess-area">
+        <div class="input-row">
+          <input class="guess-input" type="text" id="guess-input"
+                 placeholder="Type a fungus name..." autocomplete="off" spellcheck="false" />
+          <button class="guess-btn" id="guess-btn">Guess</button>
+        </div>
+        <div class="meta-row">
+          <span class="remaining" id="remaining">20 remaining</span>
+          <button class="hint-btn" id="hint-btn" title="Spend 3 guesses to reveal the next rank on the mystery path">Hint (-3)</button>
+        </div>
+        <div class="action-row">
+          <button class="giveup-btn" id="giveup-btn" onclick="giveUp()">Give Up</button>
+        </div>
+        <div class="ac-dropdown" id="ac-dropdown"></div>
+      </div>
+
+      <div class="guess-log" id="guess-log" style="display:none">
+        <h4>Your Guesses</h4>
+        <div id="log-entries"></div>
+      </div>
+    </div>
+
+    <div class="right-panel" id="right-panel">
+      <canvas id="spore-canvas"></canvas>
+      <svg id="tree-svg"></svg>
+      <div class="table-overlay" id="table-overlay">
+        <table>
+          <thead><tr><th>#</th><th>Guess</th><th>Shared clade</th><th>Dist</th></tr></thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Modal (bottom sheet) -->
+  <div class="info-modal" id="info-modal">
+    <div class="info-modal-backdrop" onclick="closeInfoModal()"></div>
+    <div class="info-modal-sheet">
+      <div class="info-modal-header">
+        <div class="info-modal-title-row">
+          <h3 id="info-title">Fungi</h3>
+          <span class="rank-badge" id="info-rank">Kingdom</span>
+        </div>
+        <button class="info-modal-close" onclick="closeInfoModal()">&#10005;</button>
+      </div>
+      <div class="desc" id="info-desc">Fungi are eukaryotic organisms that include yeasts, molds, mushrooms, and lichens. They form a kingdom separate from plants, animals, and bacteria. Fungi absorb nutrients by secreting enzymes externally and play critical roles as decomposers, symbionts, and pathogens in all ecosystems.</div>
+      <div class="lca-note" id="info-lca-note" style="display:none"></div>
+      <a class="wiki-link" id="info-wiki" href="https://en.wikipedia.org/wiki/Fungus" target="_blank">From Wikipedia &#8594;</a>
+    </div>
+  </div>
+</div>
+
+<div class="game-overlay" id="game-overlay">
+  <div class="overlay-card">
+    <h2 id="overlay-title"></h2>
+    <p id="overlay-text"></p>
+    <div id="overlay-score" style="display:none;margin-bottom:16px">
+      <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;color:#6b7db0;margin-bottom:4px">Your Score</div>
+      <div id="overlay-score-val" style="font-size:2.2rem;font-weight:700;color:#4aff9a;text-shadow:0 0 20px rgba(74,255,154,0.3)">20</div>
+      <div id="overlay-score-label" style="font-size:0.78rem;color:#6b7db0;margin-top:2px">out of 20</div>
+    </div>
+    <button class="play-btn" id="overlay-btn" onclick="newGame()">Play Again</button>
+    <button class="play-btn" id="overlay-practice-btn" onclick="switchMode('practice')" style="display:none;margin-top:8px;background:rgba(74,158,255,0.08);border-color:var(--border);color:var(--text-muted);font-size:0.85rem">Practice Mode</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+//  SPECIES DATABASE (same data, compressed)
+// ═══════════════════════════════════════
+const SPECIES=[
+["button mushroom",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Agaricaceae","Agaricus","Agaricus bisporus"]],
+["field mushroom",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Agaricaceae","Agaricus","Agaricus campestris"]],
+["parasol mushroom",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Agaricaceae","Macrolepiota","Macrolepiota procera"]],
+["green-spored parasol",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Agaricaceae","Chlorophyllum","Chlorophyllum molybdites"]],
+["shaggy mane",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Agaricaceae","Coprinus","Coprinus comatus"]],
+["fly agaric",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Amanitaceae","Amanita","Amanita muscaria"]],
+["death cap",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Amanitaceae","Amanita","Amanita phalloides"]],
+["destroying angel",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Amanitaceae","Amanita","Amanita virosa"]],
+["caesar's mushroom",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Amanitaceae","Amanita","Amanita caesarea"]],
+["violet webcap",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Cortinariaceae","Cortinarius","Cortinarius violaceus"]],
+["deadly webcap",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Cortinariaceae","Cortinarius","Cortinarius rubellus"]],
+["amethyst deceiver",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Hydnangiaceae","Laccaria","Laccaria amethystina"]],
+["scarlet waxcap",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Hygrophoraceae","Hygrocybe","Hygrocybe coccinea"]],
+["parrot waxcap",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Hygrophoraceae","Gliophorus","Gliophorus psittacinus"]],
+["fairy ring mushroom",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Marasmiaceae","Marasmius","Marasmius oreades"]],
+["shiitake",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Marasmiaceae","Lentinula","Lentinula edodes"]],
+["bleeding fairy helmet",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Mycenaceae","Mycena","Mycena haematopus"]],
+["jack-o-lantern mushroom",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Omphalotaceae","Omphalotus","Omphalotus olearius"]],
+["honey fungus",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Physalacriaceae","Armillaria","Armillaria mellea"]],
+["enoki",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Physalacriaceae","Flammulina","Flammulina velutipes"]],
+["oyster mushroom",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Pleurotaceae","Pleurotus","Pleurotus ostreatus"]],
+["king oyster",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Pleurotaceae","Pleurotus","Pleurotus eryngii"]],
+["common inkcap",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Psathyrellaceae","Coprinopsis","Coprinopsis atramentaria"]],
+["mica cap",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Psathyrellaceae","Coprinellus","Coprinellus micaceus"]],
+["split gill",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Schizophyllaceae","Schizophyllum","Schizophyllum commune"]],
+["golden teacher",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Hymenogastraceae","Psilocybe","Psilocybe cubensis"]],
+["liberty cap",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Hymenogastraceae","Psilocybe","Psilocybe semilanceata"]],
+["sulphur tuft",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Strophariaceae","Hypholoma","Hypholoma fasciculare"]],
+["matsutake",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Tricholomataceae","Tricholoma","Tricholoma matsutake"]],
+["blewit",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Tricholomataceae","Lepista","Lepista nuda"]],
+["porcini",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Boletales","Boletaceae","Boletus","Boletus edulis"]],
+["bay bolete",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Boletales","Boletaceae","Imleria","Imleria badia"]],
+["slippery jack",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Boletales","Suillaceae","Suillus","Suillus luteus"]],
+["birch bolete",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Boletales","Boletaceae","Leccinum","Leccinum scabrum"]],
+["common earthball",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Boletales","Sclerodermataceae","Scleroderma","Scleroderma citrinum"]],
+["brown roll-rim",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Boletales","Paxillaceae","Paxillus","Paxillus involutus"]],
+["chanterelle",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Cantharellales","Cantharellaceae","Cantharellus","Cantharellus cibarius"]],
+["yellowfoot chanterelle",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Cantharellales","Cantharellaceae","Craterellus","Craterellus tubaeformis"]],
+["black trumpet",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Cantharellales","Cantharellaceae","Craterellus","Craterellus cornucopioides"]],
+["hedgehog mushroom",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Cantharellales","Hydnaceae","Hydnum","Hydnum repandum"]],
+["chicken of the woods",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Polyporales","Laetiporaceae","Laetiporus","Laetiporus sulphureus"]],
+["birch polypore",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Polyporales","Fomitopsidaceae","Fomitopsis","Fomitopsis betulina"]],
+["reishi",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Polyporales","Ganodermataceae","Ganoderma","Ganoderma lucidum"]],
+["artist's conk",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Polyporales","Ganodermataceae","Ganoderma","Ganoderma applanatum"]],
+["maitake",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Polyporales","Meripilaceae","Grifola","Grifola frondosa"]],
+["turkey tail",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Polyporales","Polyporaceae","Trametes","Trametes versicolor"]],
+["dryad's saddle",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Polyporales","Polyporaceae","Cerioporus","Cerioporus squamosus"]],
+["the sickener",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Russulales","Russulaceae","Russula","Russula emetica"]],
+["charcoal burner",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Russulales","Russulaceae","Russula","Russula cyanoxantha"]],
+["saffron milk cap",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Russulales","Russulaceae","Lactarius","Lactarius deliciosus"]],
+["indigo milk cap",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Russulales","Russulaceae","Lactarius","Lactarius indigo"]],
+["lion's mane",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Russulales","Hericiaceae","Hericium","Hericium erinaceus"]],
+["coral tooth",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Russulales","Hericiaceae","Hericium","Hericium coralloides"]],
+["common stinkhorn",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Phallales","Phallaceae","Phallus","Phallus impudicus"]],
+["latticed stinkhorn",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Phallales","Phallaceae","Clathrus","Clathrus ruber"]],
+["pink-tipped coral",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Gomphales","Gomphaceae","Ramaria","Ramaria botrytis"]],
+["chaga",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Hymenochaetales","Hymenochaetaceae","Inonotus","Inonotus obliquus"]],
+["wood ear",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Auriculariales","Auriculariaceae","Auricularia","Auricularia auricula-judae"]],
+["yellow brain fungus",["Fungi","Basidiomycota","Agaricomycotina","Tremellomycetes","Tremellales","Tremellaceae","Tremella","Tremella mesenterica"]],
+["snow fungus",["Fungi","Basidiomycota","Agaricomycotina","Tremellomycetes","Tremellales","Tremellaceae","Tremella","Tremella fuciformis"]],
+["cryptococcus",["Fungi","Basidiomycota","Agaricomycotina","Tremellomycetes","Tremellales","Tremellaceae","Cryptococcus","Cryptococcus neoformans"]],
+["orange jelly",["Fungi","Basidiomycota","Agaricomycotina","Dacrymycetes","Dacrymycetales","Dacrymycetaceae","Dacrymyces","Dacrymyces chrysospermus"]],
+["corn smut",["Fungi","Basidiomycota","Ustilaginomycotina","Ustilaginomycetes","Ustilaginales","Ustilaginaceae","Ustilago","Ustilago maydis"]],
+["wheat stem rust",["Fungi","Basidiomycota","Pucciniomycotina","Pucciniomycetes","Pucciniales","Pucciniaceae","Puccinia","Puccinia graminis"]],
+["cedar-apple rust",["Fungi","Basidiomycota","Pucciniomycotina","Pucciniomycetes","Pucciniales","Pucciniaceae","Gymnosporangium","Gymnosporangium juniperi-virginianae"]],
+["yellow morel",["Fungi","Ascomycota","Pezizomycotina","Pezizomycetes","Pezizales","Morchellaceae","Morchella","Morchella esculenta"]],
+["black morel",["Fungi","Ascomycota","Pezizomycotina","Pezizomycetes","Pezizales","Morchellaceae","Morchella","Morchella elata"]],
+["black truffle",["Fungi","Ascomycota","Pezizomycotina","Pezizomycetes","Pezizales","Tuberaceae","Tuber","Tuber melanosporum"]],
+["white truffle",["Fungi","Ascomycota","Pezizomycotina","Pezizomycetes","Pezizales","Tuberaceae","Tuber","Tuber magnatum"]],
+["summer truffle",["Fungi","Ascomycota","Pezizomycotina","Pezizomycetes","Pezizales","Tuberaceae","Tuber","Tuber aestivum"]],
+["false morel",["Fungi","Ascomycota","Pezizomycotina","Pezizomycetes","Pezizales","Discinaceae","Gyromitra","Gyromitra esculenta"]],
+["elfin saddle",["Fungi","Ascomycota","Pezizomycotina","Pezizomycetes","Pezizales","Helvellaceae","Helvella","Helvella lacunosa"]],
+["orange peel fungus",["Fungi","Ascomycota","Pezizomycotina","Pezizomycetes","Pezizales","Pyronemataceae","Aleuria","Aleuria aurantia"]],
+["scarlet elf cup",["Fungi","Ascomycota","Pezizomycotina","Pezizomycetes","Pezizales","Sarcoscyphaceae","Sarcoscypha","Sarcoscypha coccinea"]],
+["scarlet caterpillar club",["Fungi","Ascomycota","Pezizomycotina","Sordariomycetes","Hypocreales","Cordycipitaceae","Cordyceps","Cordyceps militaris"]],
+["zombie-ant fungus",["Fungi","Ascomycota","Pezizomycotina","Sordariomycetes","Hypocreales","Ophiocordycipitaceae","Ophiocordyceps","Ophiocordyceps unilateralis"]],
+["caterpillar fungus",["Fungi","Ascomycota","Pezizomycotina","Sordariomycetes","Hypocreales","Ophiocordycipitaceae","Ophiocordyceps","Ophiocordyceps sinensis"]],
+["ergot",["Fungi","Ascomycota","Pezizomycotina","Sordariomycetes","Hypocreales","Clavicipitaceae","Claviceps","Claviceps purpurea"]],
+["white muscardine",["Fungi","Ascomycota","Pezizomycotina","Sordariomycetes","Hypocreales","Cordycipitaceae","Beauveria","Beauveria bassiana"]],
+["dead man's fingers",["Fungi","Ascomycota","Pezizomycotina","Sordariomycetes","Xylariales","Xylariaceae","Xylaria","Xylaria polymorpha"]],
+["candlesnuff fungus",["Fungi","Ascomycota","Pezizomycotina","Sordariomycetes","Xylariales","Xylariaceae","Xylaria","Xylaria hypoxylon"]],
+["king alfred's cakes",["Fungi","Ascomycota","Pezizomycotina","Sordariomycetes","Xylariales","Xylariaceae","Daldinia","Daldinia concentrica"]],
+["red bread mold",["Fungi","Ascomycota","Pezizomycotina","Sordariomycetes","Sordariales","Sordariaceae","Neurospora","Neurospora crassa"]],
+["black mold",["Fungi","Ascomycota","Pezizomycotina","Eurotiomycetes","Eurotiales","Aspergillaceae","Aspergillus","Aspergillus niger"]],
+["aflatoxin mold",["Fungi","Ascomycota","Pezizomycotina","Eurotiomycetes","Eurotiales","Aspergillaceae","Aspergillus","Aspergillus flavus"]],
+["penicillin mold",["Fungi","Ascomycota","Pezizomycotina","Eurotiomycetes","Eurotiales","Aspergillaceae","Penicillium","Penicillium chrysogenum"]],
+["blue cheese mold",["Fungi","Ascomycota","Pezizomycotina","Eurotiomycetes","Eurotiales","Aspergillaceae","Penicillium","Penicillium roqueforti"]],
+["camembert mold",["Fungi","Ascomycota","Pezizomycotina","Eurotiomycetes","Eurotiales","Aspergillaceae","Penicillium","Penicillium camemberti"]],
+["athlete's foot fungus",["Fungi","Ascomycota","Pezizomycotina","Eurotiomycetes","Onygenales","Arthrodermataceae","Trichophyton","Trichophyton rubrum"]],
+["powdery mildew",["Fungi","Ascomycota","Pezizomycotina","Leotiomycetes","Erysiphales","Erysiphaceae","Blumeria","Blumeria graminis"]],
+["old man's beard",["Fungi","Ascomycota","Pezizomycotina","Lecanoromycetes","Lecanorales","Parmeliaceae","Usnea","Usnea barbata"]],
+["shield lichen",["Fungi","Ascomycota","Pezizomycotina","Lecanoromycetes","Lecanorales","Parmeliaceae","Parmelia","Parmelia sulcata"]],
+["reindeer lichen",["Fungi","Ascomycota","Pezizomycotina","Lecanoromycetes","Lecanorales","Cladoniaceae","Cladonia","Cladonia rangiferina"]],
+["pixie cup lichen",["Fungi","Ascomycota","Pezizomycotina","Lecanoromycetes","Lecanorales","Cladoniaceae","Cladonia","Cladonia pyxidata"]],
+["british soldiers lichen",["Fungi","Ascomycota","Pezizomycotina","Lecanoromycetes","Lecanorales","Cladoniaceae","Cladonia","Cladonia cristatella"]],
+["common orange lichen",["Fungi","Ascomycota","Pezizomycotina","Lecanoromycetes","Teloschistales","Teloschistaceae","Xanthoria","Xanthoria parietina"]],
+["lungwort lichen",["Fungi","Ascomycota","Pezizomycotina","Lecanoromycetes","Peltigerales","Lobariaceae","Lobaria","Lobaria pulmonaria"]],
+["dog lichen",["Fungi","Ascomycota","Pezizomycotina","Lecanoromycetes","Peltigerales","Peltigeraceae","Peltigera","Peltigera canina"]],
+["map lichen",["Fungi","Ascomycota","Pezizomycotina","Lecanoromycetes","Lecanorales","Rhizocarpaceae","Rhizocarpon","Rhizocarpon geographicum"]],
+["baker's yeast",["Fungi","Ascomycota","Saccharomycotina","Saccharomycetes","Saccharomycetales","Saccharomycetaceae","Saccharomyces","Saccharomyces cerevisiae"]],
+["lager yeast",["Fungi","Ascomycota","Saccharomycotina","Saccharomycetes","Saccharomycetales","Saccharomycetaceae","Saccharomyces","Saccharomyces pastorianus"]],
+["thrush fungus",["Fungi","Ascomycota","Saccharomycotina","Saccharomycetes","Saccharomycetales","Debaryomycetaceae","Candida","Candida albicans"]],
+["sooty mold",["Fungi","Ascomycota","Pezizomycotina","Dothideomycetes","Capnodiales","Mycosphaerellaceae","Zymoseptoria","Zymoseptoria tritici"]],
+["peach leaf curl",["Fungi","Ascomycota","Taphrinomycotina","Taphrinomycetes","Taphrinales","Taphrinaceae","Taphrina","Taphrina deformans"]],
+["black bread mold",["Fungi","Mucoromycota","Mucoromycotina","Mucoromycetes","Mucorales","Rhizopodaceae","Rhizopus","Rhizopus stolonifer"]],
+["common pin mold",["Fungi","Mucoromycota","Mucoromycotina","Mucoromycetes","Mucorales","Mucoraceae","Mucor","Mucor mucedo"]],
+["chytrid frog pathogen",["Fungi","Chytridiomycota","Chytridiomycotina","Chytridiomycetes","Rhizophydiales","Batrachochytriaceae","Batrachochytrium","Batrachochytrium dendrobatidis"]],
+["arbuscular mycorrhiza",["Fungi","Glomeromycota","Glomeromycotina","Glomeromycetes","Glomerales","Glomeraceae","Rhizophagus","Rhizophagus irregularis"]],
+["giant puffball",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Agaricaceae","Calvatia","Calvatia gigantea"]],
+["gem-studded puffball",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Agaricaceae","Lycoperdon","Lycoperdon perlatum"]],
+["earthstar",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Geastrales","Geastraceae","Geastrum","Geastrum triplex"]],
+["bird's nest fungus",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Agaricaceae","Cyathus","Cyathus striatus"]],
+["witches' butter",["Fungi","Basidiomycota","Agaricomycotina","Tremellomycetes","Tremellales","Tremellaceae","Tremella","Tremella aurantia"]],
+["king bolete",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Boletales","Boletaceae","Boletus","Boletus rex-veris"]],
+// ── Additional Basidiomycota ──
+["beefsteak fungus",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Fistulinaceae","Fistulina","Fistulina hepatica"]],
+["cauliflower fungus",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Polyporales","Sparassidaceae","Sparassis","Sparassis crispa"]],
+["devil's tooth",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Thelephorales","Bankeraceae","Hydnellum","Hydnellum peckii"]],
+["tinder fungus",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Polyporales","Polyporaceae","Fomes","Fomes fomentarius"]],
+["agarikon",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Polyporales","Fomitopsidaceae","Laricifomes","Laricifomes officinalis"]],
+["wine cap",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Strophariaceae","Stropharia","Stropharia rugosoannulata"]],
+["nameko",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Strophariaceae","Pholiota","Pholiota nameko"]],
+["pioppino",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Strophariaceae","Cyclocybe","Cyclocybe aegerita"]],
+["paddy straw mushroom",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Pluteaceae","Volvariella","Volvariella volvacea"]],
+["almond mushroom",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Agaricaceae","Agaricus","Agaricus subrufescens"]],
+["beech mushroom",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Lyophyllaceae","Hypsizygus","Hypsizygus tessellatus"]],
+["ghost mushroom",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Omphalotaceae","Omphalotus","Omphalotus nidiformis"]],
+["bioluminescent mycena",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Mycenaceae","Mycena","Mycena chlorophos"]],
+["witch's hat",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Hygrophoraceae","Hygrocybe","Hygrocybe conica"]],
+["velvet shank",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Agaricales","Physalacriaceae","Flammulina","Flammulina filiformis"]],
+["penny bun",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Boletales","Boletaceae","Boletus","Boletus pinophilus"]],
+["old man of the woods",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Boletales","Boletaceae","Strobilomyces","Strobilomyces strobilaceus"]],
+["hen of the woods",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Polyporales","Meripilaceae","Grifola","Grifola frondosa"]],
+["sulfur shelf",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Polyporales","Laetiporaceae","Laetiporus","Laetiporus cincinnatus"]],
+["tiger milk mushroom",["Fungi","Basidiomycota","Agaricomycotina","Agaricomycetes","Polyporales","Polyporaceae","Lignosus","Lignosus rhinocerus"]],
+// ── Additional Ascomycota ──
+["lobster mushroom",["Fungi","Ascomycota","Pezizomycotina","Sordariomycetes","Hypocreales","Hypocreaceae","Hypomyces","Hypomyces lactifluorum"]],
+["chestnut blight",["Fungi","Ascomycota","Pezizomycotina","Sordariomycetes","Diaporthales","Cryphonectriaceae","Cryphonectria","Cryphonectria parasitica"]],
+["dutch elm disease",["Fungi","Ascomycota","Pezizomycotina","Sordariomycetes","Ophiostomatales","Ophiostomataceae","Ophiostoma","Ophiostoma novo-ulmi"]],
+["green elf cup",["Fungi","Ascomycota","Pezizomycotina","Leotiomycetes","Helotiales","Chlorociboriaceae","Chlorociboria","Chlorociboria aeruginascens"]],
+["lemon drops",["Fungi","Ascomycota","Pezizomycotina","Leotiomycetes","Helotiales","Helotiaceae","Bisporella","Bisporella citrina"]],
+["tar spot",["Fungi","Ascomycota","Pezizomycotina","Leotiomycetes","Rhytismatales","Rhytismataceae","Rhytisma","Rhytisma acerinum"]],
+["koji mold",["Fungi","Ascomycota","Pezizomycotina","Eurotiomycetes","Eurotiales","Aspergillaceae","Aspergillus","Aspergillus oryzae"]],
+["valley fever fungus",["Fungi","Ascomycota","Pezizomycotina","Eurotiomycetes","Onygenales","Onygenaceae","Coccidioides","Coccidioides immitis"]],
+["apple scab",["Fungi","Ascomycota","Pezizomycotina","Dothideomycetes","Venturiales","Venturiaceae","Venturia","Venturia inaequalis"]],
+// ── Additional Lichens ──
+["wolf lichen",["Fungi","Ascomycota","Pezizomycotina","Lecanoromycetes","Lecanorales","Parmeliaceae","Letharia","Letharia vulpina"]],
+["iceland moss",["Fungi","Ascomycota","Pezizomycotina","Lecanoromycetes","Lecanorales","Parmeliaceae","Cetraria","Cetraria islandica"]],
+["oakmoss",["Fungi","Ascomycota","Pezizomycotina","Lecanoromycetes","Lecanorales","Parmeliaceae","Evernia","Evernia prunastri"]],
+["rock tripe",["Fungi","Ascomycota","Pezizomycotina","Lecanoromycetes","Umbilicariales","Umbilicariaceae","Umbilicaria","Umbilicaria mammulata"]],
+["sunburst lichen",["Fungi","Ascomycota","Pezizomycotina","Lecanoromycetes","Teloschistales","Teloschistaceae","Xanthoria","Xanthoria elegans"]],
+];
+
+const RANK_NAMES=["Kingdom","Phylum","Subphylum","Class","Order","Family","Genus","Species"];
+
+const DESCRIPTIONS={"Fungi":"Fungi are eukaryotic organisms that include yeasts, molds, mushrooms, and lichens. They form a kingdom separate from plants, animals, and bacteria. Fungi absorb nutrients by secreting enzymes externally and play critical roles as decomposers, symbionts, and pathogens in all ecosystems.","Basidiomycota":"The Basidiomycota are a large phylum of fungi that includes mushrooms, puffballs, stinkhorns, bracket fungi, rusts, smuts, and jelly fungi. They are characterized by their club-shaped spore-bearing structures called basidia.","Ascomycota":"The Ascomycota, or sac fungi, are the largest phylum of fungi. They produce spores in sac-like structures called asci. This diverse group includes morels, truffles, yeasts, most lichens, and many plant pathogens.","Mucoromycota":"The Mucoromycota are a phylum of fungi formerly classified within Zygomycota. They include fast-growing bread molds and pin molds that reproduce through thick-walled zygospores.","Chytridiomycota":"The Chytridiomycota, or chytrids, are among the most ancient lineages of fungi. They are unique in producing motile zoospores with flagella. Some are devastating pathogens, particularly of amphibians.","Glomeromycota":"The Glomeromycota form obligate symbiotic relationships with the roots of most land plants through arbuscular mycorrhizae. They enhance plant nutrient uptake and are essential for terrestrial ecosystem function.","Agaricomycotina":"The Agaricomycotina is a subdivision of Basidiomycota containing most familiar mushroom-forming fungi, as well as jelly fungi.","Ustilaginomycotina":"The Ustilaginomycotina are smut fungi \u2014 primarily plant parasites that cause significant agricultural damage.","Pucciniomycotina":"The Pucciniomycotina contain the rust fungi \u2014 obligate plant parasites with complex life cycles.","Agaricomycetes":"The Agaricomycetes are the largest class of mushroom-forming fungi, including gilled mushrooms, boletes, chanterelles, coral fungi, polypores, puffballs, and stinkhorns.","Tremellomycetes":"The Tremellomycetes are jelly fungi characterized by gelatinous fruiting bodies, including the pathogenic yeast Cryptococcus.","Dacrymycetes":"The Dacrymycetes are a small class of jelly fungi producing bright orange or yellow gelatinous fruiting bodies.","Ustilaginomycetes":"The Ustilaginomycetes include the true smut fungi. Corn smut is prized in Mexican cuisine as huitlacoche.","Pucciniomycetes":"The Pucciniomycetes contain the rust fungi, obligate plant parasites with extremely complex life cycles.","Pezizomycetes":"The Pezizomycetes are cup fungi that include morels, truffles, false morels, and elf cups.","Sordariomycetes":"The Sordariomycetes are flask fungi including the insect-parasitizing Cordyceps and the historical ergot fungus.","Eurotiomycetes":"The Eurotiomycetes include Penicillium (source of penicillin) and Aspergillus (used in food fermentation).","Lecanoromycetes":"The Lecanoromycetes are the largest class of lichen-forming fungi \u2014 symbiotic partnerships between fungi and algae.","Saccharomycetes":"The Saccharomycetes are the true yeasts including baker's yeast, one of the most important organisms in civilization.","Leotiomycetes":"The Leotiomycetes include the powdery mildews and various cup fungi.","Dothideomycetes":"The Dothideomycetes are the largest class of Ascomycota, including many plant pathogens and sooty molds.","Taphrinomycetes":"The Taphrinomycetes include plant pathogens causing leaf curls, galls, and witches' brooms.","Mucoromycetes":"The Mucoromycetes include the common bread molds and pin molds.","Chytridiomycetes":"The Chytridiomycetes are aquatic fungi producing flagellated zoospores, including the amphibian chytrid pathogen.","Glomeromycetes":"The Glomeromycetes form arbuscular mycorrhizal symbioses with approximately 80% of all land plant species.","Pezizomycotina":"The Pezizomycotina is the largest subphylum of Ascomycota, containing cup fungi, flask fungi, lichens, and molds.","Saccharomycotina":"The Saccharomycotina are the budding yeasts essential to baking, brewing, and biotechnology.","Taphrinomycotina":"The Taphrinomycotina are an early-diverging subphylum of Ascomycota.","Mucoromycotina":"The Mucoromycotina contain common bread molds and pin molds.","Chytridiomycotina":"The Chytridiomycotina is a subphylum of ancient aquatic fungi with flagellated spores.","Glomeromycotina":"The Glomeromycotina form the most widespread plant-fungus symbiosis on Earth.","Agaricales":"The Agaricales is the largest order of mushroom-forming fungi, including most familiar gilled mushrooms and puffballs.","Boletales":"The Boletales are best known for boletes \u2014 fleshy mushrooms with pores instead of gills, like porcini.","Cantharellales":"The Cantharellales include chanterelles, hedgehog mushrooms, and black trumpets.","Polyporales":"The Polyporales are bracket fungi and polypores, major wood decomposers including reishi and turkey tail.","Russulales":"The Russulales include Russula, Lactarius (milk caps), and lion's mane.","Phallales":"The Phallales are stinkhorn fungi, known for rapid growth and foul odors that attract flies.","Gomphales":"The Gomphales include coral fungi with colorful branching fruiting bodies.","Hymenochaetales":"The Hymenochaetales include chaga, a parasitic fungus used in traditional medicine.","Auriculariales":"The Auriculariales include wood ear fungi, widely used in Asian cuisine.","Tremellales":"The Tremellales are jelly fungi including snow fungus, cultivated for culinary use in East Asia.","Dacrymycetales":"The Dacrymycetales produce bright orange or yellow jelly-like fruiting bodies.","Ustilaginales":"The Ustilaginales are smut fungi. Corn smut (huitlacoche) is eaten as a delicacy in Mexico.","Pucciniales":"The Pucciniales are rust fungi \u2014 obligate plant parasites with complex life cycles.","Pezizales":"The Pezizales include morels, truffles, and cup fungi \u2014 some of the world's most prized edible fungi.","Hypocreales":"The Hypocreales include Cordyceps, the zombie-ant fungus, and ergot.","Xylariales":"The Xylariales are flask fungi that decompose dead wood, like dead man's fingers.","Sordariales":"The Sordariales include Neurospora crassa, a key model organism in genetics.","Eurotiales":"The Eurotiales include Aspergillus and Penicillium \u2014 the most economically important molds.","Onygenales":"The Onygenales include dermatophytes causing athlete's foot and ringworm.","Erysiphales":"The Erysiphales are powdery mildews forming white coatings on plant leaves.","Lecanorales":"The Lecanorales is the largest order of lichen-forming fungi.","Peltigerales":"The Peltigerales are large foliose lichens, many fixing atmospheric nitrogen.","Teloschistales":"The Teloschistales include brightly colored orange and yellow lichens.","Saccharomycetales":"The Saccharomycetales are budding yeasts including baker's and brewer's yeast.","Capnodiales":"The Capnodiales include sooty molds and the wheat pathogen Zymoseptoria.","Taphrinales":"The Taphrinales are plant pathogens causing leaf curls and galls.","Mucorales":"The Mucorales include common bread molds.","Rhizophydiales":"The Rhizophydiales include the amphibian chytrid fungus.","Glomerales":"The Glomerales form arbuscular mycorrhizal associations with plant roots.","Geastrales":"The Geastrales include earthstars with star-shaped outer layers.","Agaricaceae":"The Agaricaceae include button mushrooms, parasol mushrooms, puffballs, and bird's nest fungi.","Amanitaceae":"The Amanitaceae include the death cap and the iconic fly agaric.","Boletaceae":"The Boletaceae are fleshy pored mushrooms including the prized porcini.","Cantharellaceae":"The Cantharellaceae include chanterelles \u2014 among the most prized wild edible fungi.","Russulaceae":"The Russulaceae include Russula and Lactarius, both ectomycorrhizal.","Hericiaceae":"The Hericiaceae are tooth fungi including lion's mane, studied for neuroprotective compounds.","Polyporaceae":"The Polyporaceae include turkey tail, the most common polypore worldwide.","Ganodermataceae":"The Ganodermataceae include reishi, revered in traditional Asian medicine.","Morchellaceae":"The Morchellaceae include true morels with distinctive honeycomb caps.","Tuberaceae":"The Tuberaceae include the true truffles \u2014 among the most expensive foods in the world.","Cordycipitaceae":"The Cordycipitaceae include insect-parasitizing Cordyceps that mummify hosts.","Ophiocordycipitaceae":"The Ophiocordycipitaceae include the zombie-ant fungus and caterpillar fungus.","Xylariaceae":"The Xylariaceae produce dark fruiting bodies like dead man's fingers.","Aspergillaceae":"The Aspergillaceae include Aspergillus and Penicillium \u2014 essential in food and medicine.","Parmeliaceae":"The Parmeliaceae are the largest lichen family, including beard and shield lichens.","Cladoniaceae":"The Cladoniaceae include reindeer lichens and British soldiers lichen.","Saccharomycetaceae":"The Saccharomycetaceae include baker's yeast \u2014 the most important microorganism in civilization.","Phallaceae":"The Phallaceae are stinkhorns producing foul-smelling spore masses.","Tremellaceae":"The Tremellaceae are jelly fungi including commercially cultivated snow fungus.","Strophariaceae":"The Strophariaceae include toxic species like sulphur tuft.","Hymenogastraceae":"The Hymenogastraceae include Psilocybe, studied for treating depression and PTSD.","Tricholomataceae":"The Tricholomataceae include matsutake, prized in Japanese cuisine.","Cortinariaceae":"The Cortinariaceae are webcaps with cobweb-like veils, including deadly species.","Physalacriaceae":"The Physalacriaceae include honey fungus and enoki mushrooms.","Pleurotaceae":"The Pleurotaceae include oyster mushrooms, widely cultivated worldwide.","Psathyrellaceae":"The Psathyrellaceae include inkcaps whose gills liquefy into black ink.","Marasmiaceae":"The Marasmiaceae include fairy ring mushroom and shiitake.","Laetiporaceae":"The Laetiporaceae include chicken of the woods, tasting like chicken.","Fomitopsidaceae":"The Fomitopsidaceae include birch polypore, found with \u00d6tzi the Iceman.","Meripilaceae":"The Meripilaceae include maitake (hen of the woods).","Hymenochaetaceae":"The Hymenochaetaceae include chaga, used in traditional medicine.","Helvellaceae":"The Helvellaceae include saddle fungi with distinctive caps.","Sclerodermataceae":"The Sclerodermataceae include mildly toxic earthballs.","Clavicipitaceae":"The Clavicipitaceae include ergot, which profoundly influenced history.","Gomphaceae":"The Gomphaceae include coral fungi with colorful branches.","Auriculariaceae":"The Auriculariaceae include wood ear, a staple in Asian cooking.","Lobariaceae":"The Lobariaceae include lungwort lichen, a bioindicator of clean air.","Peltigeraceae":"The Peltigeraceae include dog lichen, partnering with cyanobacteria.","Teloschistaceae":"The Teloschistaceae include bright orange lichens on rocks and walls.","Debaryomycetaceae":"The Debaryomycetaceae include Candida albicans, causing thrush.","Discinaceae":"The Discinaceae include false morel, a delicacy in Finland.","Pyronemataceae":"The Pyronemataceae include orange peel fungus.","Sarcoscyphaceae":"The Sarcoscyphaceae include scarlet elf cup, appearing in late winter.","Schizophyllaceae":"The Schizophyllaceae include split gill with over 23,000 mating types.","Mycenaceae":"The Mycenaceae include small mushrooms, some bioluminescent.","Omphalotaceae":"The Omphalotaceae include the bioluminescent jack-o-lantern mushroom.","Hygrophoraceae":"The Hygrophoraceae are brightly colored waxcaps of ancient meadows.","Hydnangiaceae":"The Hydnangiaceae include the purple amethyst deceiver.","Hydnaceae":"The Hydnaceae include hedgehog mushroom with tooth-like spines.","Suillaceae":"The Suillaceae include slippery jacks associated with pines.","Paxillaceae":"The Paxillaceae include the dangerously toxic brown roll-rim.","Ustilaginaceae":"The Ustilaginaceae include corn smut, harvested as huitlacoche.","Pucciniaceae":"The Pucciniaceae include major rust pathogens of cereal crops.","Arthrodermataceae":"The Arthrodermataceae include dermatophytes causing athlete's foot.","Erysiphaceae":"The Erysiphaceae cause powdery mildew on plants.","Sordariaceae":"The Sordariaceae include Neurospora crassa, a Nobel Prize model organism.","Mycosphaerellaceae":"The Mycosphaerellaceae include the most damaging wheat pathogen in Europe.","Taphrinaceae":"The Taphrinaceae cause peach leaf curl.","Rhizopodaceae":"The Rhizopodaceae include black bread mold.","Mucoraceae":"The Mucoraceae include common pin mold.","Batrachochytriaceae":"The Batrachochytriaceae contain the fungus causing global amphibian declines.","Glomeraceae":"The Glomeraceae form essential mycorrhizal symbioses with plants.","Geastraceae":"The Geastraceae include earthstars found in forests worldwide.","Rhizocarpaceae":"The Rhizocarpaceae include map lichen, used in lichenometry.","Fistulinaceae":"The Fistulinaceae include beefsteak fungus, which oozes a red juice when cut and grows on oak trees, resembling a slab of raw meat.","Sparassidaceae":"The Sparassidaceae include the cauliflower fungus, producing large wavy fruiting bodies resembling a sea sponge or cauliflower at the base of trees.","Thelephorales":"The Thelephorales are ectomycorrhizal fungi that include tooth fungi and earthfans. Many produce leathery or corky fruiting bodies.","Bankeraceae":"The Bankeraceae include the devil's tooth (Hydnellum peckii), a striking fungus that oozes blood-red droplets when young.","Lyophyllaceae":"The Lyophyllaceae include the beech mushroom (shimeji), widely cultivated in East Asia for its nutty flavor and crunchy texture.","Pluteaceae":"The Pluteaceae include the paddy straw mushroom (Volvariella volvacea), one of the most widely cultivated mushrooms in Southeast Asia.","Diaporthales":"The Diaporthales include many plant pathogens. Chestnut blight (Cryphonectria parasitica) devastated American chestnut forests in the early 20th century.","Cryphonectriaceae":"The Cryphonectriaceae include the chestnut blight fungus, which virtually eliminated the American chestnut from eastern North American forests.","Ophiostomatales":"The Ophiostomatales include the Dutch elm disease fungi, which have killed billions of elm trees worldwide since the 1920s.","Ophiostomataceae":"The Ophiostomataceae include Ophiostoma species spread by bark beetles, causing vascular wilt diseases that block water transport in trees.","Helotiales":"The Helotiales are a large order of small cup fungi and allies. Many are saprophytes on dead plant material; some cause plant diseases.","Chlorociboriaceae":"The Chlorociboriaceae include green elf cup, which stains dead wood a vivid blue-green color used historically in Tunbridge ware woodworking.","Helotiaceae":"The Helotiaceae include lemon drops (Bisporella citrina), tiny bright yellow cup fungi found in dense clusters on decaying wood.","Rhytismatales":"The Rhytismatales include tar spot fungi that form distinctive black spots on maple and sycamore leaves.","Rhytismataceae":"The Rhytismataceae include Rhytisma acerinum, causing tar spot disease \u2014 one of the most recognizable leaf diseases worldwide.","Venturiales":"The Venturiales include apple scab (Venturia inaequalis), one of the most economically important diseases of apple orchards globally.","Venturiaceae":"The Venturiaceae include Venturia, the cause of scab diseases on apples and pears \u2014 requiring extensive fungicide programs to control.","Onygenaceae":"The Onygenaceae include Coccidioides, the cause of valley fever (coccidioidomycosis), a serious respiratory infection in arid regions.","Umbilicariales":"The Umbilicariales include rock tripe lichens that grow on exposed rock faces. Some species were historically used as famine food.","Umbilicariaceae":"The Umbilicariaceae include Umbilicaria, large foliose lichens attached to rocks by a single central point (umbilicus). Some are used in traditional Korean cuisine.","Hypocreaceae":"The Hypocreaceae include lobster mushroom (Hypomyces lactifluorum), a parasitic fungus that transforms Russula or Lactarius hosts into a bright orange, seafood-flavored delicacy."};
+
+// ═══════════════════════════════════════
+//  GAME STATE
+// ═══════════════════════════════════════
+let mystery=null, guesses=[], remaining=20, gameNum=1, revealedHintDepths=new Set(), gameOver=false;
+let gameMode='daily'; // 'daily' or 'practice'
+let hintsUsed=0;
+let didGiveUp=false;
+const nameIndex=[];
+SPECIES.forEach(s=>{const[c,l]=s;const sci=l[l.length-1];nameIndex.push({common:c,sci,key:(c+' '+sci).toLowerCase(),entry:s})});
+
+// ═══════════════════════════════════════
+//  DAILY MODE LOGIC
+// ═══════════════════════════════════════
+function getTodayStr(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+
+function hashDate(str){
+  // Simple deterministic hash → species index
+  let h=0;
+  for(let i=0;i<str.length;i++){h=((h<<5)-h+str.charCodeAt(i))|0}
+  return Math.abs(h)%SPECIES.length;
+}
+
+function getDailyIndex(){return hashDate(getTodayStr())}
+
+function getDailyState(){
+  try{const s=localStorage.getItem('spordle-daily');return s?JSON.parse(s):null}catch(e){return null}
+}
+function saveDailyState(state){
+  try{localStorage.setItem('spordle-daily',JSON.stringify(state))}catch(e){}
+}
+
+function dailyScore(){
+  // Score = remaining guesses (max 20 if solved in 1 guess, 0 if used all 20 or gave up)
+  return Math.max(0,remaining);
+}
+
+function isDailyComplete(){
+  const s=getDailyState();
+  return s&&s.date===getTodayStr()&&s.complete;
+}
+
+function switchMode(mode){
+  document.getElementById('game-overlay').classList.remove('active');
+  gameMode=mode;
+  newGame();
+}
+
+function startGame(mode){
+  document.getElementById('landing-page').style.display='none';
+  document.getElementById('game-page').style.display='flex';
+  gameMode=mode;
+  resizeCanvas();
+  newGame();
+}
+
+function goToLanding(){
+  document.getElementById('game-overlay').classList.remove('active');
+  closeInfoModal();
+  document.getElementById('game-page').style.display='none';
+  document.getElementById('landing-page').style.display='flex';
+}
+
+function openInfoModal(){ document.getElementById('info-modal').classList.add('open'); }
+function closeInfoModal(){ document.getElementById('info-modal').classList.remove('open'); }
+
+function updateDailyStatus(){
+  const el=document.getElementById('daily-status');
+  if(gameMode!=='daily'){el.innerHTML='';return}
+  if(isDailyComplete()&&!gameOver){
+    const s=getDailyState();
+    el.innerHTML=`<div class="daily-complete">Today\'s Spordle complete!<br><span class="score">${s.score}/20</span><br><span style="font-size:0.75rem;color:#6b7db0">Solved in ${s.guessCount} guess${s.guessCount!==1?'es':''}</span></div>`;
+    return;
+  }
+  if(gameMode==='daily'&&!gameOver){
+    el.innerHTML=`<div class="daily-badge"><span class="dot"></span>${getTodayStr()}</div>`;
+  }else{
+    el.innerHTML='';
+  }
+}
+
+// ═══════════════════════════════════════
+//  PHYLOGENY LOGIC
+// ═══════════════════════════════════════
+function findLCA(a,b){let d=0;for(let i=0;i<Math.min(a.length,b.length);i++){if(a[i]===b[i])d=i;else break}return{name:a[d],depth:d,rank:RANK_NAMES[d]||'Clade'}}
+
+function buildMinimalTree(){
+  if(guesses.length===0&&revealedHintDepths.size===0&&!didGiveUp)return null;
+  const won=guesses.some(g=>g.sci===mystery[1][mystery[1].length-1]);
+  const trie={name:'Fungi',rank:0,children:{},leafLabels:[]};
+  function ins(lin,lab){let n=trie;for(let i=1;i<lin.length;i++){const t=lin[i];if(!n.children[t])n.children[t]={name:t,rank:i,children:{},leafLabels:[]};n=n.children[t]}if(lab)n.leafLabels.push(lab)}
+  guesses.forEach(g=>{ins(g.lineage,{text:g.common,type:g.sci===mystery[1][mystery[1].length-1]?'answer':'guess'})});
+  if(!won){
+    if(didGiveUp){
+      // Reveal the FULL mystery path with the actual species name
+      ins(mystery[1],{text:mystery[0],type:'revealed'});
+    }else{
+      let deep=0;
+      guesses.forEach(g=>{if(g.lcaDepth>deep)deep=g.lcaDepth});
+      revealedHintDepths.forEach(d=>{if(d>deep)deep=d});
+      const mp=mystery[1].slice(0,deep+1);
+      revealedHintDepths.forEach(d=>{while(mp.length<=d)mp.push(mystery[1][mp.length])});
+      ins(mp,{text:'???',type:'mystery'});
+    }
+  }
+  function prune(n){const ks=Object.keys(n.children);ks.forEach(k=>prune(n.children[k]));if(ks.length===1&&n.leafLabels.length===0){const c=n.children[ks[0]];n.name=c.name;n.rank=c.rank;n.children=c.children;n.leafLabels=c.leafLabels;prune(n)}}
+  prune(trie);
+  return trie;
+}
+
+// ═══════════════════════════════════════
+//  SPORE PARTICLE SYSTEM
+// ═══════════════════════════════════════
+const sporeCanvas=document.getElementById('spore-canvas');
+const sCtx=sporeCanvas.getContext('2d');
+let spores=[];
+let dragSources=[];
+
+function resizeCanvas(){
+  const p=document.getElementById('right-panel');
+  sporeCanvas.width=p.clientWidth;
+  sporeCanvas.height=p.clientHeight;
+}
+resizeCanvas();
+window.addEventListener('resize',resizeCanvas);
+
+function emitSpores(wx,wy,count){
+  // Convert world coords to screen coords using current SVG transform
+  const svg=document.getElementById('tree-svg');
+  const ctm=svg.querySelector('.tree-root')?.getCTM();
+  if(!ctm)return;
+  const sx=wx*ctm.a+ctm.e;
+  const sy=wy*ctm.d+ctm.f;
+  for(let i=0;i<count;i++){
+    spores.push({
+      x:sx+(Math.random()-0.5)*16,
+      y:sy+(Math.random()-0.5)*16,
+      vx:(Math.random()-0.5)*1.5,
+      vy:-Math.random()*2-0.5,
+      life:1,
+      decay:0.006+Math.random()*0.012,
+      size:1.5+Math.random()*3,
+      hue:190+Math.random()*40,
+    });
+  }
+}
+
+function emitBurst(wx,wy,count){
+  const svg=document.getElementById('tree-svg');
+  const ctm=svg.querySelector('.tree-root')?.getCTM();
+  if(!ctm)return;
+  const sx=wx*ctm.a+ctm.e;
+  const sy=wy*ctm.d+ctm.f;
+  for(let i=0;i<count;i++){
+    const a=Math.random()*Math.PI*2;
+    const spd=1+Math.random()*3;
+    spores.push({
+      x:sx,y:sy,
+      vx:Math.cos(a)*spd,vy:Math.sin(a)*spd-1,
+      life:1,decay:0.008+Math.random()*0.01,
+      size:2+Math.random()*4,
+      hue:180+Math.random()*60,
+    });
+  }
+}
+
+function tickSpores(){
+  sCtx.clearRect(0,0,sporeCanvas.width,sporeCanvas.height);
+  spores=spores.filter(s=>{
+    s.x+=s.vx;s.y+=s.vy;
+    s.vy-=0.02; // float upward
+    s.vx*=0.98;
+    s.life-=s.decay;
+    if(s.life<=0)return false;
+    const a=s.life*0.6;
+    sCtx.beginPath();
+    sCtx.arc(s.x,s.y,s.size*s.life,0,Math.PI*2);
+    sCtx.fillStyle=`hsla(${s.hue},80%,70%,${a})`;
+    sCtx.shadowColor=`hsla(${s.hue},90%,60%,${a*0.8})`;
+    sCtx.shadowBlur=s.size*3;
+    sCtx.fill();
+    sCtx.shadowBlur=0;
+    return true;
+  });
+  requestAnimationFrame(tickSpores);
+}
+tickSpores();
+
+
+// ═══════════════════════════════════════
+//  TREE RENDERING
+// ═══════════════════════════════════════
+let simulation=null, svgGroup=null, zoomBehavior=null;
+
+function initSvg(){
+  const svg=d3.select('#tree-svg');
+  svg.selectAll('*').remove();
+  // SVG defs for glow filters
+  const defs=svg.append('defs');
+
+  // Node glow
+  const glow=defs.append('filter').attr('id','glow').attr('x','-50%').attr('y','-50%').attr('width','200%').attr('height','200%');
+  glow.append('feGaussianBlur').attr('in','SourceGraphic').attr('stdDeviation','4').attr('result','blur');
+  glow.append('feComposite').attr('in','SourceGraphic').attr('in2','blur').attr('operator','over');
+
+  // Bright glow for mystery
+  const glow2=defs.append('filter').attr('id','glow-bright').attr('x','-80%').attr('y','-80%').attr('width','260%').attr('height','260%');
+  glow2.append('feGaussianBlur').attr('in','SourceGraphic').attr('stdDeviation','6').attr('result','blur');
+  glow2.append('feComposite').attr('in','SourceGraphic').attr('in2','blur').attr('operator','over');
+
+  // Edge glow
+  const eg=defs.append('filter').attr('id','edge-glow').attr('x','-20%').attr('y','-20%').attr('width','140%').attr('height','140%');
+  eg.append('feGaussianBlur').attr('in','SourceGraphic').attr('stdDeviation','3').attr('result','blur');
+  eg.append('feComposite').attr('in','SourceGraphic').attr('in2','blur').attr('operator','over');
+
+  // Mushroom glow
+  const mg=defs.append('filter').attr('id','shroom-glow').attr('x','-100%').attr('y','-100%').attr('width','300%').attr('height','300%');
+  mg.append('feGaussianBlur').attr('in','SourceGraphic').attr('stdDeviation','5').attr('result','blur');
+  mg.append('feComposite').attr('in','SourceGraphic').attr('in2','blur').attr('operator','over');
+
+  zoomBehavior=d3.zoom().scaleExtent([0.25,3]).on('zoom',e=>svgGroup.attr('transform',e.transform));
+  svg.call(zoomBehavior);
+  svgGroup=svg.append('g').attr('class','tree-root');
+  svgGroup.append('g').attr('class','edges-layer');
+  svgGroup.append('g').attr('class','shrooms-layer');
+  svgGroup.append('g').attr('class','nodes-layer');
+}
+
+function nodeGradient(rank){
+  const cols=[
+    ['#1a3a6e','#2a5ab0'],  // Kingdom
+    ['#1e3d7a','#2e60b8'],  // Phylum
+    ['#1a4580','#3068c0'],  // Subphylum
+    ['#164a85','#2870c8'],  // Class
+    ['#1250a0','#3080d8'],  // Order
+    ['#1058b0','#3888e0'],  // Family
+    ['#0e60c0','#4090e8'],  // Genus
+    ['#0c68d0','#4898f0'],  // Species
+  ];
+  return cols[Math.min(rank,cols.length-1)];
+}
+
+function drawMushroom(g,x,y,scale,hue){
+  const s=scale||1;
+  const mg=g.append('g')
+    .attr('transform',`translate(${x},${y}) scale(${s})`)
+    .attr('filter','url(#shroom-glow)')
+    .attr('opacity',0)
+    .attr('class','mushroom-icon');
+
+  // Stem
+  mg.append('path')
+    .attr('d','M-2,0 L-3,10 Q-3,13 0,13 Q3,13 3,10 L2,0 Z')
+    .attr('fill',`hsla(${hue},50%,60%,0.6)`)
+    .attr('stroke',`hsla(${hue},60%,70%,0.4)`)
+    .attr('stroke-width',0.5);
+
+  // Cap
+  mg.append('path')
+    .attr('d','M-8,1 Q-8,-6 -4,-8 Q0,-10 4,-8 Q8,-6 8,1 Q4,3 0,3 Q-4,3 -8,1 Z')
+    .attr('fill',`hsla(${hue},60%,55%,0.7)`)
+    .attr('stroke',`hsla(${hue},70%,70%,0.5)`)
+    .attr('stroke-width',0.5);
+
+  // Glow spots on cap
+  mg.append('circle').attr('cx',-3).attr('cy',-4).attr('r',1.2).attr('fill',`hsla(${hue},80%,80%,0.6)`);
+  mg.append('circle').attr('cx',2).attr('cy',-5).attr('r',0.9).attr('fill',`hsla(${hue},80%,80%,0.5)`);
+  mg.append('circle').attr('cx',0).attr('cy',-2).attr('r',0.7).attr('fill',`hsla(${hue},80%,80%,0.4)`);
+
+  // Animate in
+  mg.transition().duration(600).delay(Math.random()*300).attr('opacity',1);
+
+  return mg;
+}
+
+function renderTree(){
+  const trie=buildMinimalTree();
+  const svg=d3.select('#tree-svg');
+  const panel=document.getElementById('right-panel');
+  const W=panel.clientWidth, H=panel.clientHeight||600;
+
+  if(!trie){
+    svgGroup.selectAll('.edges-layer *,.nodes-layer *,.shrooms-layer *').remove();
+    const g=svgGroup.select('.nodes-layer');
+
+    // Root node with glow
+    const rg=g.append('g').attr('class','clade-node').attr('transform',`translate(${W/2},60)`);
+    rg.append('rect').attr('x',-45).attr('y',-16).attr('width',90).attr('height',32).attr('rx',6)
+      .attr('fill','#1a3a6e').attr('stroke','#4a9eff').attr('stroke-width',1.5).attr('filter','url(#glow)');
+    rg.append('text').text('Fungi').attr('text-anchor','middle').attr('dominant-baseline','central')
+      .attr('fill','#b8d4ff').attr('font-family','Quicksand, sans-serif').attr('font-size','13px').attr('font-weight','600');
+    rg.style('cursor','pointer').on('click',()=>showInfo('Fungi',0,true));
+
+    // Glowing dashed line
+    g.append('line').attr('x1',W/2).attr('y1',76).attr('x2',W/2).attr('y2',220)
+      .attr('stroke','#4a9eff').attr('stroke-width',1.5).attr('stroke-dasharray','6 4').attr('opacity',0.4)
+      .attr('filter','url(#edge-glow)');
+
+    // Find label
+    g.append('text').attr('x',W/2).attr('y',248).attr('text-anchor','middle')
+      .attr('fill','#6b9dd8').attr('font-family','Quicksand, sans-serif').attr('font-size','13px').attr('font-weight','600')
+      .text('Find this Fungus!');
+
+    // Mystery box
+    const mg=g.append('g').attr('transform',`translate(${W/2},270)`);
+    mg.append('rect').attr('x',-32).attr('y',-14).attr('width',64).attr('height',28).attr('rx',6)
+      .attr('fill','rgba(15,26,53,0.8)').attr('stroke','#4a9eff').attr('stroke-width',1.5)
+      .attr('stroke-dasharray','5 3').attr('filter','url(#glow-bright)');
+    mg.append('text').text('???').attr('text-anchor','middle').attr('dominant-baseline','central')
+      .attr('fill','#4a9eff').attr('font-family','Space Grotesk, sans-serif').attr('font-size','14px').attr('font-weight','700');
+
+    // A decorative mushroom
+    drawMushroom(svgGroup.select('.shrooms-layer'),W/2-50,200,1.5,200);
+    drawMushroom(svgGroup.select('.shrooms-layer'),W/2+55,210,1.2,220);
+
+    svg.call(zoomBehavior.transform,d3.zoomIdentity);
+    return;
+  }
+
+  // ── Flatten trie ──
+  const nodes=[],links=[];
+  let idC=0;
+  function flat(tn,pid){
+    const id=idC++;
+    nodes.push({id,name:tn.name,rank:tn.rank,leafLabels:tn.leafLabels,type:'clade'});
+    if(pid!==null)links.push({source:pid,target:id});
+    tn.leafLabels.forEach(lab=>{const lid=idC++;nodes.push({id:lid,name:lab.text,rank:tn.rank+1,leafLabels:[],type:lab.type});links.push({source:id,target:lid})});
+    Object.keys(tn.children).forEach(k=>flat(tn.children[k],id));
+  }
+  flat(trie,null);
+
+  // ── Layout ──
+  const NW=130,LH=95,LP=35;
+  function compLayout(tn,dep){
+    const r={name:tn.name,depth:dep,children:[],leafChildren:[]};
+    tn.leafLabels.forEach(l=>r.leafChildren.push({name:l.text,type:l.type,depth:dep+1}));
+    Object.keys(tn.children).forEach(k=>r.children.push(compLayout(tn.children[k],dep+1)));
+    return r;
+  }
+  const lr=compLayout(trie,0);
+  function cntL(n){let c=n.leafChildren.length;if(!n.children.length&&!c)c=1;n.children.forEach(ch=>c+=cntL(ch));return c}
+  let lx=0;
+  function aPos(n){
+    n.leafChildren.forEach(lc=>{lc.x=lx*(NW+LP)+NW/2;lc.y=lc.depth*LH+50;lx++});
+    if(!n.children.length&&!n.leafChildren.length){n.x=lx*(NW+LP)+NW/2;n.y=n.depth*LH+50;lx++;return}
+    n.children.forEach(ch=>aPos(ch));
+    const ax=[...n.children.map(c=>c.x),...n.leafChildren.map(c=>c.x)];
+    n.x=(Math.min(...ax)+Math.max(...ax))/2;n.y=n.depth*LH+50;
+  }
+  aPos(lr);
+  const pm={};
+  function bpm(n){pm[n.name]={x:n.x,y:n.y};n.leafChildren.forEach(c=>pm[c.name]={x:c.x,y:c.y});n.children.forEach(c=>bpm(c))}
+  bpm(lr);
+  nodes.forEach(n=>{const p=pm[n.name];if(p){n.tx=p.x;n.ty=p.y}else{n.tx=W/2;n.ty=200}});
+
+  // ── Simulation ──
+  if(simulation)simulation.stop();
+  simulation=d3.forceSimulation(nodes)
+    .force('x',d3.forceX(d=>d.tx).strength(0.12))
+    .force('y',d3.forceY(d=>d.ty).strength(0.15))
+    .force('collide',d3.forceCollide(38))
+    .force('link',d3.forceLink(links).id(d=>d.id).distance(LH*0.8).strength(0.4))
+    .alphaDecay(0.02).velocityDecay(0.45).on('tick',tick);
+  nodes.forEach(n=>{n.x=n.tx+(Math.random()-0.5)*30;n.y=n.ty+(Math.random()-0.5)*20});
+
+  // ── Draw edges ──
+  const eL=svgGroup.select('.edges-layer');
+  const nL=svgGroup.select('.nodes-layer');
+  const sL=svgGroup.select('.shrooms-layer');
+  eL.selectAll('*').remove();nL.selectAll('*').remove();sL.selectAll('*').remove();
+
+  const edgeSel=eL.selectAll('path').data(links).join('path')
+    .attr('fill','none').attr('stroke','#3a7ae8').attr('stroke-width',2.5)
+    .attr('stroke-linecap','round').attr('opacity',0.35).attr('filter','url(#edge-glow)');
+
+  // ── Draw mushrooms on edges ──
+  const shroomData=links.filter((_,i)=>i>0).slice(0,12); // mushrooms on some edges
+  const shroomSel=sL.selectAll('g.shroom-holder').data(shroomData).join('g').attr('class','shroom-holder');
+  shroomSel.each(function(d,i){
+    const hue=190+Math.random()*50;
+    const side=(i%2===0)?-1:1;
+    const sc=0.8+Math.random()*0.6;
+    drawMushroom(d3.select(this),0,0,sc,hue);
+    d._shroomSide=side;
+    d._shroomOffset=8+Math.random()*12;
+  });
+
+  // ── Draw nodes ──
+  const nodeGroups=nL.selectAll('g').data(nodes).join('g');
+
+  // Drag with spore emission
+  const drag=d3.drag()
+    .on('start',(ev,d)=>{if(!ev.active)simulation.alphaTarget(0.1).restart();d.fx=d.x;d.fy=d.y;d._dragging=true})
+    .on('drag',(ev,d)=>{d.fx=ev.x;d.fy=ev.y;emitSpores(ev.x,ev.y,2)})
+    .on('end',(ev,d)=>{if(!ev.active)simulation.alphaTarget(0);d.fx=null;d.fy=null;d._dragging=false;emitBurst(d.x,d.y,15)});
+  nodeGroups.call(drag);
+
+  nodeGroups.each(function(d){
+    const g=d3.select(this);
+    const tl=d.name.length*7.5+22;
+    const w=Math.max(tl,60);
+    const h=30;
+
+    if(d.type==='clade'){
+      const cols=nodeGradient(d.rank);
+      g.append('rect').attr('x',-w/2).attr('y',-h/2).attr('width',w).attr('height',h).attr('rx',6)
+        .attr('fill',cols[0]).attr('stroke',cols[1]).attr('stroke-width',1.5).attr('filter','url(#glow)');
+      g.append('text').text(d.name).attr('text-anchor','middle').attr('dominant-baseline','central')
+        .attr('fill','#b8d4ff').attr('font-family','Quicksand, sans-serif').attr('font-size','12px').attr('font-weight','600')
+        .style('pointer-events','none');
+      g.style('cursor','pointer').on('click',()=>showInfo(d.name,d.rank,true));
+    } else if(d.type==='answer'){
+      g.append('rect').attr('x',-w/2).attr('y',-h/2).attr('width',w).attr('height',h).attr('rx',6)
+        .attr('fill','#0a3025').attr('stroke','#4aff9a').attr('stroke-width',2).attr('filter','url(#glow-bright)');
+      g.append('text').text(d.name).attr('text-anchor','middle').attr('dominant-baseline','central')
+        .attr('fill','#4aff9a').attr('font-family','Space Grotesk, sans-serif').attr('font-size','12px').attr('font-weight','600')
+        .style('pointer-events','none');
+    } else if(d.type==='mystery'){
+      g.append('rect').attr('x',-w/2).attr('y',-h/2).attr('width',w).attr('height',h).attr('rx',6)
+        .attr('fill','rgba(10,14,26,0.8)').attr('stroke','#4a9eff').attr('stroke-width',1.5)
+        .attr('stroke-dasharray','5 3').attr('filter','url(#glow-bright)');
+      g.append('text').text('???').attr('text-anchor','middle').attr('dominant-baseline','central')
+        .attr('fill','#4a9eff').attr('font-family','Space Grotesk, sans-serif').attr('font-size','13px').attr('font-weight','700')
+        .style('pointer-events','none');
+    } else if(d.type==='revealed'){
+      // Give-up reveal: amber glow so the answer stands out as "shown, not earned"
+      g.append('rect').attr('x',-w/2).attr('y',-h/2).attr('width',w).attr('height',h).attr('rx',6)
+        .attr('fill','#1a1508').attr('stroke','#ffb84a').attr('stroke-width',2).attr('filter','url(#glow-bright)');
+      g.append('text').text(d.name).attr('text-anchor','middle').attr('dominant-baseline','central')
+        .attr('fill','#ffb84a').attr('font-family','Space Grotesk, sans-serif').attr('font-size','12px').attr('font-weight','600')
+        .style('pointer-events','none');
+    } else {
+      // guess leaf
+      g.append('rect').attr('x',-w/2).attr('y',-h/2).attr('width',w).attr('height',h).attr('rx',6)
+        .attr('fill','rgba(15,22,45,0.85)').attr('stroke','#3a6ab0').attr('stroke-width',1.2).attr('filter','url(#glow)');
+      g.append('text').text(d.name).attr('text-anchor','middle').attr('dominant-baseline','central')
+        .attr('fill','#8ab8e8').attr('font-family','Space Grotesk, sans-serif').attr('font-size','11px').attr('font-weight','500')
+        .style('pointer-events','none');
+    }
+  });
+
+  // Emit burst for newest node
+  if(nodes.length>0){
+    const newest=nodes[nodes.length-1];
+    setTimeout(()=>emitBurst(newest.tx,newest.ty,25),200);
+  }
+
+  function tick(){
+    edgeSel.attr('d',d=>{const s=d.source,t=d.target;const my=(s.y+t.y)/2;return`M${s.x},${s.y+15} C${s.x},${my} ${t.x},${my} ${t.x},${t.y-15}`});
+    nodeGroups.attr('transform',d=>`translate(${d.x},${d.y})`);
+    // Update mushroom positions
+    shroomSel.attr('transform',d=>{
+      const s=typeof d.source==='object'?d.source:nodes[d.source];
+      const t=typeof d.target==='object'?d.target:nodes[d.target];
+      const mx=(s.x+t.x)/2+d._shroomSide*d._shroomOffset;
+      const my=(s.y+t.y)/2;
+      return`translate(${mx},${my})`;
+    });
+    // Emit occasional ambient spores from mushrooms
+    if(Math.random()<0.03){
+      shroomSel.each(function(d){
+        if(Math.random()<0.15){
+          const s=typeof d.source==='object'?d.source:nodes[d.source];
+          const t=typeof d.target==='object'?d.target:nodes[d.target];
+          emitSpores((s.x+t.x)/2+d._shroomSide*d._shroomOffset,(s.y+t.y)/2-10,1);
+        }
+      });
+    }
+  }
+
+  // Center
+  const ax=nodes.map(n=>n.tx),ay=nodes.map(n=>n.ty);
+  const mnx=Math.min(...ax)-90,mxx=Math.max(...ax)+90,mny=Math.min(...ay)-50,mxy=Math.max(...ay)+50;
+  const tw=mxx-mnx,th=mxy-mny;
+  const sc=Math.min(W/tw,H/th,1.2)*0.82;
+  const cx=(mnx+mxx)/2,cy=(mny+mxy)/2;
+  svg.transition().duration(600).call(zoomBehavior.transform,d3.zoomIdentity.translate(W/2,H/2).scale(sc).translate(-cx,-cy));
+}
+
+
+// ═══════════════════════════════════════
+//  GAME CONTROLS
+// ═══════════════════════════════════════
+function endGame(){
+  gameOver=true;
+  document.getElementById('guess-input').disabled=true;
+  document.getElementById('guess-btn').disabled=true;
+  document.getElementById('hint-btn').disabled=true;
+  document.getElementById('giveup-btn').disabled=true;
+  document.getElementById('game-subtitle').textContent='';
+}
+
+function submitGuess(){
+  if(gameOver)return;
+  const input=document.getElementById('guess-input');
+  const raw=input.value.trim().toLowerCase();
+  if(!raw)return;
+  let entry=null;
+  for(const n of nameIndex){if(n.common.toLowerCase()===raw||n.sci.toLowerCase()===raw){entry=n;break}}
+  if(!entry){input.classList.add('error');setTimeout(()=>input.classList.remove('error'),600);return}
+  if(guesses.some(g=>g.sci===entry.sci)){input.value='';closeAC();return}
+  remaining--;
+  const lca=findLCA(entry.entry[1],mystery[1]);
+  const guess={common:entry.common,sci:entry.sci,lineage:entry.entry[1],lca:lca.name,lcaDepth:lca.depth,lcaRank:lca.rank,distance:(entry.entry[1].length-1-lca.depth)+(mystery[1].length-1-lca.depth)};
+  guesses.push(guess);
+  const isWin=guess.sci===mystery[1][mystery[1].length-1];
+  if(isWin||remaining<=0)endGame();
+  input.value='';closeAC();
+  document.getElementById('remaining').textContent=`${remaining} remaining`;
+  if(!gameOver)document.getElementById('game-subtitle').textContent='Enter your next guess.';
+  if(isWin){showInfo(guess.sci,7,true);document.getElementById('info-lca-note').style.display='block';document.getElementById('info-lca-note').textContent='You found it!'}
+  else{showInfo(lca.name,lca.depth,true);document.getElementById('info-lca-note').style.display='block';document.getElementById('info-lca-note').textContent=`The answer and ${guess.common} have this in common.`}
+  addLogEntry(guess);renderTree();
+  if(gameOver){
+    if(gameMode==='daily'){
+      const score=isWin?dailyScore():0;
+      saveDailyState({date:getTodayStr(),complete:true,score,guessCount:guesses.length,won:isWin});
+    }
+    setTimeout(()=>{
+      if(isWin)showOverlay('You found it!',`The mystery fungus was <strong>${mystery[0]}</strong> (<em>${mystery[1][mystery[1].length-1]}</em>).<br>Solved in <strong>${guesses.length}</strong> guess${guesses.length!==1?'es':''}!`,isWin);
+      else showOverlay('Out of guesses!',`The mystery fungus was <strong>${mystery[0]}</strong> (<em>${mystery[1][mystery[1].length-1]}</em>).`,false);
+    },800);
+  }
+}
+
+function giveUp(){
+  if(gameOver)return;
+  didGiveUp=true;
+  endGame();
+  if(gameMode==='daily'){
+    saveDailyState({date:getTodayStr(),complete:true,score:0,guessCount:guesses.length,won:false,gaveUp:true});
+  }
+  showInfo(mystery[1][mystery[1].length-1],7);
+  document.getElementById('info-lca-note').style.display='block';
+  document.getElementById('info-lca-note').textContent=`The answer was ${mystery[0]}.`;
+  // Re-render the tree to show the full mystery path
+  renderTree();
+  setTimeout(()=>{
+    showOverlay('You gave up',`The mystery fungus was <strong>${mystery[0]}</strong> (<em>${mystery[1][mystery[1].length-1]}</em>).`,false);
+  },1200);
+}
+
+function useHint(){
+  if(gameOver||remaining<3)return;
+  remaining-=3;
+  hintsUsed++;
+  document.getElementById('remaining').textContent=`${remaining} remaining`;
+  let deepest=0;
+  guesses.forEach(g=>{if(g.lcaDepth>deepest)deepest=g.lcaDepth});
+  revealedHintDepths.forEach(d=>{if(d>deepest)deepest=d});
+  const next=deepest+1;
+  if(next<mystery[1].length-1){
+    revealedHintDepths.add(next);
+    showInfo(mystery[1][next],next,true);
+    document.getElementById('info-lca-note').style.display='block';
+    document.getElementById('info-lca-note').textContent=`Hint: the mystery fungus belongs to ${RANK_NAMES[next]} ${mystery[1][next]}`;
+    renderTree();
+  }
+  if(remaining<=0&&!gameOver){
+    endGame();
+    if(gameMode==='daily')saveDailyState({date:getTodayStr(),complete:true,score:0,guessCount:guesses.length,won:false});
+    setTimeout(()=>showOverlay('Out of guesses!',`The mystery fungus was <strong>${mystery[0]}</strong> (<em>${mystery[1][mystery[1].length-1]}</em>).`,false),500);
+  }
+}
+
+function showInfo(t,r,autoOpen){
+  document.getElementById('info-title').textContent=t;
+  document.getElementById('info-rank').textContent=RANK_NAMES[r]||'Clade';
+  document.getElementById('info-desc').textContent=DESCRIPTIONS[t]||`${t} is a taxonomic group within the fungal kingdom.`;
+  document.getElementById('info-wiki').href=`https://en.wikipedia.org/wiki/${encodeURIComponent(t.replace(/ /g,'_'))}`;
+  document.getElementById('info-lca-note').style.display='none';
+  if(autoOpen) openInfoModal();
+}
+
+function addLogEntry(guess){
+  document.getElementById('guess-log').style.display='block';
+  const entries=document.getElementById('log-entries');
+  const div=document.createElement('div');div.className='log-entry';
+  div.innerHTML=`<span class="name">${guess.common}</span><span class="lca">${guess.lcaRank}: ${guess.lca}</span>`;
+  div.addEventListener('click',()=>{showInfo(guess.lca,guess.lcaDepth,true);document.getElementById('info-lca-note').style.display='block';document.getElementById('info-lca-note').textContent=`The answer and ${guess.common} have this in common.`});
+  entries.insertBefore(div,entries.firstChild);
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td>${guesses.length}</td><td>${guess.common}</td><td>${guess.lca}</td><td>${guess.distance}</td>`;
+  document.getElementById('table-body').appendChild(tr);
+}
+
+function showOverlay(title,html,won){
+  document.getElementById('overlay-title').textContent=title;
+  document.getElementById('overlay-text').innerHTML=html;
+  const scoreEl=document.getElementById('overlay-score');
+  const btnEl=document.getElementById('overlay-btn');
+  const pracBtnEl=document.getElementById('overlay-practice-btn');
+
+  if(gameMode==='daily'){
+    const s=getDailyState();
+    const score=s?s.score:0;
+    scoreEl.style.display='block';
+    document.getElementById('overlay-score-val').textContent=score;
+    document.getElementById('overlay-score-val').style.color=won?'#4aff9a':'#ff6b85';
+    document.getElementById('overlay-score-label').textContent=won?`${guesses.length} guess${guesses.length!==1?'es':''} used`:'Better luck tomorrow!';
+    btnEl.style.display='none';
+    pracBtnEl.style.display='inline-block';
+  }else{
+    scoreEl.style.display='none';
+    btnEl.style.display='inline-block';
+    btnEl.textContent='New Fungus';
+    pracBtnEl.style.display='none';
+  }
+  document.getElementById('game-overlay').classList.add('active');
+  updateDailyStatus();
+}
+
+function toggleTable(){
+  const t=document.getElementById('table-overlay');
+  const open=t.classList.toggle('open');
+  document.getElementById('table-btn').textContent=open?'Hide':'Table';
+}
+
+function newGame(){
+  document.getElementById('game-overlay').classList.remove('active');
+
+  if(gameMode==='daily'){
+    // Check if already completed today
+    if(isDailyComplete()){
+      // Show completion state instead of new game
+      guesses=[];remaining=0;revealedHintDepths=new Set();gameOver=true;hintsUsed=0;didGiveUp=false;
+      mystery=SPECIES[getDailyIndex()];
+      const s=getDailyState();
+      document.getElementById('game-title').textContent=`Daily Spordle`;
+      document.getElementById('game-subtitle').textContent='';
+      document.getElementById('remaining').textContent='0 remaining';
+      document.getElementById('guess-input').disabled=true;
+      document.getElementById('guess-btn').disabled=true;
+      document.getElementById('hint-btn').disabled=true;
+      document.getElementById('giveup-btn').disabled=true;
+      document.getElementById('log-entries').innerHTML='';
+      document.getElementById('guess-log').style.display='none';
+      document.getElementById('table-body').innerHTML='';
+      document.getElementById('table-overlay').classList.remove('open');
+      document.getElementById('table-btn').textContent='Show table';
+      showInfo('Fungi',0);
+      updateDailyStatus();
+      spores=[];
+      initSvg();renderTree();
+      return;
+    }
+    mystery=SPECIES[getDailyIndex()];
+    gameNum=-1; // signals daily mode
+  }else{
+    mystery=SPECIES[Math.floor(Math.random()*SPECIES.length)];
+    gameNum=Math.floor(Math.random()*9999)+1;
+  }
+
+  guesses=[];remaining=20;revealedHintDepths=new Set();gameOver=false;hintsUsed=0;didGiveUp=false;
+
+  if(gameMode==='daily'){
+    document.getElementById('game-title').textContent='Daily Spordle';
+  }else{
+    document.getElementById('game-title').textContent=`Practice #${gameNum}`;
+  }
+  document.getElementById('game-subtitle').textContent='Guess any species to begin!';
+  document.getElementById('remaining').textContent='20 remaining';
+  const inp=document.getElementById('guess-input');inp.value='';inp.disabled=false;
+  document.getElementById('guess-btn').disabled=false;
+  document.getElementById('hint-btn').disabled=false;
+  document.getElementById('giveup-btn').disabled=false;
+  document.getElementById('log-entries').innerHTML='';
+  document.getElementById('guess-log').style.display='none';
+  document.getElementById('table-body').innerHTML='';
+  document.getElementById('table-overlay').classList.remove('open');
+  document.getElementById('table-btn').textContent='Table';
+  showInfo('Fungi',0);
+  updateDailyStatus();
+  spores=[];
+  initSvg();renderTree();
+}
+
+// ═══════════════════════════════════════
+//  AUTOCOMPLETE
+// ═══════════════════════════════════════
+const acEl=document.getElementById('ac-dropdown');
+let acItems=[],acIdx=-1;
+const guessInput=document.getElementById('guess-input');
+
+guessInput.addEventListener('input',function(){
+  const v=this.value.trim().toLowerCase();
+  if(v.length<1){closeAC();return}
+  const matches=nameIndex.filter(n=>n.key.includes(v)).slice(0,10);
+  if(!matches.length){closeAC();return}
+  acItems=matches;acIdx=-1;acEl.innerHTML='';
+  matches.forEach(m=>{
+    const div=document.createElement('div');div.className='ac-item';
+    div.innerHTML=`<span class="sci">${m.sci}</span><span class="com">${m.common}</span>`;
+    div.addEventListener('mousedown',e=>{e.preventDefault();guessInput.value=m.common;closeAC();submitGuess()});
+    acEl.appendChild(div);
+  });
+  acEl.classList.add('open');
+});
+
+guessInput.addEventListener('keydown',function(e){
+  if(!acEl.classList.contains('open')){if(e.key==='Enter'){e.preventDefault();submitGuess()}return}
+  if(e.key==='ArrowDown'){e.preventDefault();acIdx=Math.min(acIdx+1,acItems.length-1);hlAC()}
+  else if(e.key==='ArrowUp'){e.preventDefault();acIdx=Math.max(acIdx-1,-1);hlAC()}
+  else if(e.key==='Enter'){e.preventDefault();if(acIdx>=0)guessInput.value=acItems[acIdx].common;closeAC();submitGuess()}
+  else if(e.key==='Escape')closeAC();
+});
+guessInput.addEventListener('blur',()=>setTimeout(closeAC,150));
+function hlAC(){acEl.querySelectorAll('.ac-item').forEach((el,i)=>el.classList.toggle('active',i===acIdx))}
+function closeAC(){acEl.classList.remove('open');acItems=[];acIdx=-1}
+
+document.getElementById('guess-btn').addEventListener('click',submitGuess);
+document.getElementById('hint-btn').addEventListener('click',useHint);
+window.addEventListener('resize',()=>{resizeCanvas();if(guesses.length>0||revealedHintDepths.size>0)renderTree();else{initSvg();renderTree()}});
+
+// ═══════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════
+// Game starts when user selects a mode from the landing page
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+}
+</script>
+</body>
+</html>
