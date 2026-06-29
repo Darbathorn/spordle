@@ -2411,7 +2411,7 @@ guessInput.addEventListener('input',function(){
   matches.forEach(m=>{
     const div=document.createElement('div');div.className='ac-item';
     div.innerHTML=`<span class="sci">${m.sci}</span><span class="com">${m.common}</span>`;
-    div.addEventListener('mousedown',e=>{e.preventDefault();guessInput.value=m.common;closeAC();submitGuess()});
+    div.addEventListener('mousedown',e=>{e.preventDefault();guessInput.value=m.common;closeAC()});
     acEl.appendChild(div);
   });
   acEl.classList.add('open');
@@ -2421,7 +2421,7 @@ guessInput.addEventListener('keydown',function(e){
   if(!acEl.classList.contains('open')){if(e.key==='Enter'){e.preventDefault();submitGuess()}return}
   if(e.key==='ArrowDown'){e.preventDefault();acIdx=Math.min(acIdx+1,acItems.length-1);hlAC()}
   else if(e.key==='ArrowUp'){e.preventDefault();acIdx=Math.max(acIdx-1,-1);hlAC()}
-  else if(e.key==='Enter'){e.preventDefault();if(acIdx>=0)guessInput.value=acItems[acIdx].common;closeAC();submitGuess()}
+  else if(e.key==='Enter'){e.preventDefault();if(acIdx>=0)guessInput.value=acItems[acIdx].common;closeAC()}
   else if(e.key==='Escape')closeAC();
 });
 guessInput.addEventListener('blur',()=>setTimeout(closeAC,150));
