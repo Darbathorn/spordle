@@ -893,6 +893,193 @@ body {
   color: #4aff9a;
 }
 
+/* ─── Profile Button ─── */
+.profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 5px 10px 5px 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-bright);
+  font-family: 'Space Grotesk', sans-serif;
+}
+.profile-btn:hover { border-color: var(--border-glow); background: var(--bg-input); }
+.profile-btn-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.profile-btn-chevron {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+
+/* ─── Modals (Profile, Sign-in required) ─── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  padding: 24px;
+}
+.modal-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04);
+  position: relative;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.modal-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  letter-spacing: -0.2px;
+}
+.modal-close-btn {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.modal-close-btn:hover { border-color: var(--glow-blue); color: var(--text-bright); }
+.modal-body-text {
+  font-size: 0.83rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.modal-cancel-btn {
+  padding: 9px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.modal-cancel-btn:hover { border-color: var(--border-glow); color: var(--text-bright); }
+
+/* ─── Profile Modal specifics ─── */
+.profile-avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.profile-avatar-preview {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--border-glow);
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--bg-input);
+}
+.profile-field { margin-bottom: 14px; }
+.profile-field label {
+  display: block;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.profile-field input {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.83rem;
+  font-family: 'Space Grotesk', sans-serif;
+  color: var(--text-bright);
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.profile-field input:focus { border-color: var(--glow-blue); }
+.save-profile-btn {
+  padding: 10px;
+  background: rgba(74,158,255,0.1);
+  border: 1px solid rgba(74,158,255,0.28);
+  border-radius: 8px;
+  color: var(--glow-blue);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.save-profile-btn:hover { background: rgba(74,158,255,0.18); border-color: var(--glow-blue); }
+.signout-profile-btn {
+  padding: 9px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.signout-profile-btn:hover { border-color: rgba(255,100,100,0.4); color: #ff9090; }
+.profile-status-msg {
+  font-size: 0.73rem;
+  text-align: center;
+  margin-top: 10px;
+  min-height: 1em;
+}
+.profile-status-msg.success { color: #4aff9a; }
+.profile-status-msg.error { color: #ff6b85; }
+
+/* ─── Overlay score breakdown ─── */
+#overlay-score-breakdown {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  letter-spacing: 0.2px;
+}
+
 /* ─── SVG Glow Filters (defined in SVG defs) ─── */
 </style>
 </head>
@@ -903,11 +1090,11 @@ body {
   <!-- Auth (top-right) -->
   <div class="landing-auth">
     <div id="auth-user" style="display:none">
-      <div class="auth-user-row">
+      <button class="profile-btn" onclick="openProfileModal()">
         <img id="auth-avatar" class="auth-avatar-img" src="" alt="">
-        <span id="auth-display-name" class="auth-display-name"></span>
-        <button class="auth-btn auth-signout" onclick="signOut()">Sign out</button>
-      </div>
+        <span id="auth-display-name" class="profile-btn-name"></span>
+        <span class="profile-btn-chevron">&#9660;</span>
+      </button>
     </div>
     <button id="auth-signin-btn" class="auth-btn auth-google" onclick="signInWithGoogle()" style="display:none">
       <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -940,7 +1127,7 @@ body {
         <span class="lb-title">Leaderboard</span>
         <div class="lb-tabs">
           <button class="lb-tab active" id="lb-tab-daily" onclick="switchLbTab('daily')">Today</button>
-          <button class="lb-tab" id="lb-tab-practice" onclick="switchLbTab('practice')">All-time</button>
+          <button class="lb-tab" id="lb-tab-alltime" onclick="switchLbTab('alltime')">All-time</button>
         </div>
       </div>
       <div id="lb-rows" class="lb-rows">
@@ -1028,6 +1215,7 @@ body {
       <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;color:#6b7db0;margin-bottom:4px">Your Score</div>
       <div id="overlay-score-val" style="font-size:2.2rem;font-weight:700;color:#4aff9a;text-shadow:0 0 20px rgba(74,255,154,0.3)">20</div>
       <div id="overlay-score-label" style="font-size:0.78rem;color:#6b7db0;margin-top:2px">out of 20</div>
+      <div id="overlay-score-breakdown"></div>
     </div>
     <button class="play-btn" id="overlay-btn" onclick="newGame()">Play Again</button>
     <button class="play-btn" id="overlay-practice-btn" onclick="switchMode('practice')" style="display:none;margin-top:8px;background:rgba(74,158,255,0.08);border-color:var(--border);color:var(--text-muted);font-size:0.85rem">Practice Mode</button>
@@ -1045,6 +1233,55 @@ body {
           Sign in with Google
         </button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Modal -->
+<div class="modal-overlay" id="profile-modal" style="display:none" onclick="closeProfileModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span class="modal-title">Profile</span>
+      <button class="modal-close-btn" onclick="closeProfileModal()">&#10005;</button>
+    </div>
+    <div class="profile-avatar-section">
+      <img id="profile-avatar-preview" class="profile-avatar-preview" src="" alt="">
+      <div class="profile-field" style="flex:1;margin-bottom:0">
+        <label>Avatar URL</label>
+        <input id="profile-avatar-input" type="url" placeholder="https://...">
+      </div>
+    </div>
+    <div class="profile-field">
+      <label>Display Name</label>
+      <input id="profile-name-input" type="text" placeholder="Your name" maxlength="30">
+    </div>
+    <div class="modal-actions">
+      <button class="save-profile-btn" onclick="saveProfile()">Save Changes</button>
+      <button class="signout-profile-btn" onclick="signOut()">Sign Out</button>
+    </div>
+    <div id="profile-status-msg" class="profile-status-msg"></div>
+  </div>
+</div>
+
+<!-- Sign-in Required Modal (for Daily) -->
+<div class="modal-overlay" id="signin-required-modal" style="display:none" onclick="closeSigninRequired()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span class="modal-title">Sign in required</span>
+      <button class="modal-close-btn" onclick="closeSigninRequired()">&#10005;</button>
+    </div>
+    <p class="modal-body-text">Daily mode tracks your score on the leaderboard and requires a Google account. Practice mode is always available without signing in.</p>
+    <div class="modal-actions">
+      <button class="auth-btn auth-google" style="justify-content:center" onclick="signInWithGoogle()">
+        <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Sign in with Google
+      </button>
+      <button class="modal-cancel-btn" onclick="closeSigninRequired()">Maybe later</button>
     </div>
   </div>
 </div>
@@ -1249,8 +1486,10 @@ function saveDailyState(state){
 }
 
 function dailyScore(){
-  // Score = remaining guesses (max 20 if solved in 1 guess, 0 if used all 20 or gave up)
-  return Math.max(0,remaining);
+  // Base 20, -1 per guess past 3, -3 per hint used
+  const guessPenalty=Math.max(0,guesses.length-3);
+  const hintPenalty=hintsUsed*3;
+  return Math.max(0,20-guessPenalty-hintPenalty);
 }
 
 function isDailyComplete(){
@@ -1265,6 +1504,10 @@ function switchMode(mode){
 }
 
 function startGame(mode){
+  if(mode==='daily'&&!currentUser){
+    document.getElementById('signin-required-modal').style.display='flex';
+    return;
+  }
   document.getElementById('landing-page').style.display='none';
   document.getElementById('game-page').style.display='flex';
   gameMode=mode;
@@ -1733,7 +1976,7 @@ function submitGuess(){
   if(gameOver){
     if(gameMode==='daily'){
       const score=isWin?dailyScore():0;
-      saveDailyState({date:getTodayStr(),complete:true,score,guessCount:guesses.length,won:isWin});
+      saveDailyState({date:getTodayStr(),complete:true,score,guessCount:guesses.length,hintsUsed,won:isWin});
     }
     setTimeout(()=>{
       if(isWin)showOverlay('You found it!',`The mystery fungus was <strong>${mystery[0]}</strong> (<em>${mystery[1][mystery[1].length-1]}</em>).<br>Solved in <strong>${guesses.length}</strong> guess${guesses.length!==1?'es':''}!`,isWin);
@@ -1747,7 +1990,7 @@ function giveUp(){
   didGiveUp=true;
   endGame();
   if(gameMode==='daily'){
-    saveDailyState({date:getTodayStr(),complete:true,score:0,guessCount:guesses.length,won:false,gaveUp:true});
+    saveDailyState({date:getTodayStr(),complete:true,score:0,guessCount:guesses.length,hintsUsed,won:false,gaveUp:true});
   }
   showInfo(mystery[1][mystery[1].length-1],7);
   document.getElementById('info-lca-note').style.display='block';
@@ -1760,10 +2003,9 @@ function giveUp(){
 }
 
 function useHint(){
-  if(gameOver||remaining<3)return;
-  remaining-=3;
+  if(gameOver)return;
   hintsUsed++;
-  document.getElementById('remaining').textContent=`${remaining} remaining`;
+  // Hint costs 3 pts from daily score (via dailyScore()) but not from remaining guess count
   let deepest=0;
   guesses.forEach(g=>{if(g.lcaDepth>deepest)deepest=g.lcaDepth});
   revealedHintDepths.forEach(d=>{if(d>deepest)deepest=d});
@@ -1774,11 +2016,6 @@ function useHint(){
     document.getElementById('info-lca-note').style.display='block';
     document.getElementById('info-lca-note').textContent=`Hint: the mystery fungus belongs to ${RANK_NAMES[next]} ${mystery[1][next]}`;
     renderTree();
-  }
-  if(remaining<=0&&!gameOver){
-    endGame();
-    if(gameMode==='daily')saveDailyState({date:getTodayStr(),complete:true,score:0,guessCount:guesses.length,won:false});
-    setTimeout(()=>showOverlay('Out of guesses!',`The mystery fungus was <strong>${mystery[0]}</strong> (<em>${mystery[1][mystery[1].length-1]}</em>).`,false),500);
   }
 }
 
@@ -1817,6 +2054,13 @@ function showOverlay(title,html,won){
     document.getElementById('overlay-score-val').textContent=score;
     document.getElementById('overlay-score-val').style.color=won?'#4aff9a':'#ff6b85';
     document.getElementById('overlay-score-label').textContent=won?`${guesses.length} guess${guesses.length!==1?'es':''} used`:'Better luck tomorrow!';
+    // Score breakdown
+    const parts=[];
+    if(s&&s.hintsUsed)parts.push(`${s.hintsUsed} hint (−${s.hintsUsed*3})`);
+    const gp=Math.max(0,(s?.guessCount||guesses.length)-3);
+    if(gp>0)parts.push(`${gp} extra guess${gp!==1?'es':''} (−${gp})`);
+    if(!parts.length&&won)parts.push('Perfect score!');
+    document.getElementById('overlay-score-breakdown').textContent=parts.join(' · ');
     btnEl.style.display='none';
     pracBtnEl.style.display='inline-block';
   }else{
@@ -1826,20 +2070,24 @@ function showOverlay(title,html,won){
     pracBtnEl.style.display='none';
   }
 
-  // Auth row in overlay
+  // Auth row — only for daily mode
   const authRow=document.getElementById('overlay-auth-row');
   const savedMsg=document.getElementById('overlay-saved-msg');
   const signinPrompt=document.getElementById('overlay-signin-prompt');
-  authRow.style.display='block';
-  savedMsg.style.display='none';
-  signinPrompt.style.display='none';
-  if(currentUser){
-    const score=won?remaining:0;
-    saveScore(gameMode,score,guesses.length,won,gameMode==='daily'?getTodayStr():null).then(saved=>{
-      if(saved){ savedMsg.style.display='block'; }
-    });
+  if(gameMode==='daily'){
+    authRow.style.display='block';
+    savedMsg.style.display='none';
+    signinPrompt.style.display='none';
+    if(currentUser){
+      const score=won?dailyScore():0;
+      saveScore('daily',score,guesses.length,won,getTodayStr()).then(saved=>{
+        if(saved){savedMsg.style.display='block';loadLeaderboard();}
+      });
+    }else{
+      signinPrompt.style.display='block';
+    }
   }else{
-    signinPrompt.style.display='block';
+    authRow.style.display='none';
   }
 
   document.getElementById('game-overlay').classList.add('active');
@@ -1961,7 +2209,21 @@ if ('serviceWorker' in navigator) {
 //  AUTH & LEADERBOARD
 // ═══════════════════════════════════════
 let currentUser = null;
+let userProfile = null;
 let lbTab = 'daily';
+
+function updateAuthDisplay() {
+  if (!currentUser) return;
+  const name = userProfile?.display_name ||
+    currentUser.user_metadata?.full_name ||
+    currentUser.user_metadata?.name ||
+    currentUser.email || '';
+  const avatar = userProfile?.avatar_url || currentUser.user_metadata?.avatar_url || '';
+  const avatarEl = document.getElementById('auth-avatar');
+  if (avatar) { avatarEl.src = avatar; avatarEl.style.display = 'block'; }
+  else { avatarEl.style.display = 'none'; }
+  document.getElementById('auth-display-name').textContent = name;
+}
 
 function updateAuthUI(user) {
   currentUser = user;
@@ -1970,21 +2232,24 @@ function updateAuthUI(user) {
   if (user) {
     userEl.style.display = 'flex';
     signinEl.style.display = 'none';
-    const avatarEl = document.getElementById('auth-avatar');
-    const nameEl = document.getElementById('auth-display-name');
-    const avatarUrl = user.user_metadata?.avatar_url;
-    if (avatarUrl) { avatarEl.src = avatarUrl; avatarEl.style.display = 'block'; }
-    else { avatarEl.style.display = 'none'; }
-    nameEl.textContent = user.user_metadata?.full_name || user.user_metadata?.name || user.email || '';
+    updateAuthDisplay();
   } else {
+    userProfile = null;
     userEl.style.display = 'none';
     signinEl.style.display = 'flex';
   }
 }
 
+async function loadUserProfile(user) {
+  const { data } = await sb.from('profiles').select('display_name,avatar_url').eq('id', user.id).maybeSingle();
+  userProfile = data;
+  updateAuthDisplay();
+}
+
 async function initAuth() {
   const { data: { session } } = await sb.auth.getSession();
   updateAuthUI(session?.user || null);
+  if (session?.user) await loadUserProfile(session.user);
   loadLeaderboard();
 
   sb.auth.onAuthStateChange((event, session) => {
@@ -1993,6 +2258,7 @@ async function initAuth() {
       updateAuthUI(user);
       if (event === 'SIGNED_IN' && user) {
         await upsertProfile(user);
+        await loadUserProfile(user);
         loadLeaderboard();
       }
       if (event === 'SIGNED_OUT') loadLeaderboard();
@@ -2001,10 +2267,12 @@ async function initAuth() {
 }
 
 async function upsertProfile(user) {
+  const name = user.user_metadata?.full_name || user.user_metadata?.name || user.email;
+  const avatar = user.user_metadata?.avatar_url || null;
   const { error } = await sb.from('profiles').upsert({
     id: user.id,
-    display_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email,
-    avatar_url: user.user_metadata?.avatar_url || null,
+    display_name: name,
+    avatar_url: avatar,
     updated_at: new Date().toISOString(),
   }, { onConflict: 'id' });
   if (error) console.error('Profile upsert:', error.message);
@@ -2019,23 +2287,80 @@ async function signInWithGoogle() {
 
 async function signOut() {
   await sb.auth.signOut();
+  document.getElementById('profile-modal').style.display = 'none';
 }
 
-// Returns true if the score was saved, false if skipped (duplicate daily)
+// ─── Profile Modal ───
+function openProfileModal() {
+  if (!currentUser) return;
+  const name = userProfile?.display_name ||
+    currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || currentUser.email || '';
+  const avatar = userProfile?.avatar_url || currentUser.user_metadata?.avatar_url || '';
+  document.getElementById('profile-name-input').value = name;
+  document.getElementById('profile-avatar-input').value = avatar;
+  const prev = document.getElementById('profile-avatar-preview');
+  prev.src = avatar;
+  prev.style.display = avatar ? 'block' : 'none';
+  document.getElementById('profile-status-msg').textContent = '';
+  document.getElementById('profile-status-msg').className = 'profile-status-msg';
+  document.getElementById('profile-modal').style.display = 'flex';
+}
+
+// Live avatar preview
+document.getElementById('profile-avatar-input').addEventListener('input', function() {
+  const prev = document.getElementById('profile-avatar-preview');
+  prev.src = this.value;
+  prev.style.display = this.value ? 'block' : 'none';
+});
+
+function closeProfileModal() {
+  document.getElementById('profile-modal').style.display = 'none';
+}
+
+async function saveProfile() {
+  if (!currentUser) return;
+  const name = document.getElementById('profile-name-input').value.trim();
+  const avatar = document.getElementById('profile-avatar-input').value.trim();
+  const msgEl = document.getElementById('profile-status-msg');
+
+  if (!name) { msgEl.textContent = 'Display name cannot be empty.'; msgEl.className = 'profile-status-msg error'; return; }
+
+  const { error } = await sb.from('profiles').upsert({
+    id: currentUser.id,
+    display_name: name,
+    avatar_url: avatar || null,
+    updated_at: new Date().toISOString(),
+  }, { onConflict: 'id' });
+
+  if (error) { msgEl.textContent = 'Could not save. Try again.'; msgEl.className = 'profile-status-msg error'; return; }
+
+  userProfile = { display_name: name, avatar_url: avatar || null };
+  updateAuthDisplay();
+  msgEl.textContent = 'Saved!';
+  msgEl.className = 'profile-status-msg success';
+  setTimeout(() => closeProfileModal(), 900);
+}
+
+// ─── Sign-in Required Modal ───
+function closeSigninRequired() {
+  document.getElementById('signin-required-modal').style.display = 'none';
+}
+
+// ─── Score Saving ───
 async function saveScore(mode, score, guessesUsed, won, date) {
   if (!currentUser) return false;
-  // Prevent duplicate daily entries
   if (mode === 'daily' && date) {
     const { data } = await sb.from('leaderboard')
       .select('id').eq('user_id', currentUser.id).eq('mode', 'daily').eq('date', date)
       .maybeSingle();
     if (data) return false;
   }
-  const displayName = currentUser.user_metadata?.full_name ||
-                      currentUser.user_metadata?.name || currentUser.email || 'Player';
+  const displayName = userProfile?.display_name ||
+    currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || currentUser.email || 'Player';
+  const avatarUrl = userProfile?.avatar_url || currentUser.user_metadata?.avatar_url || null;
   const { error } = await sb.from('leaderboard').insert({
     display_name: displayName,
-    avatar_url: currentUser.user_metadata?.avatar_url || null,
+    avatar_url: avatarUrl,
     mode,
     score,
     guesses_used: guessesUsed,
@@ -2046,6 +2371,7 @@ async function saveScore(mode, score, guessesUsed, won, date) {
   return true;
 }
 
+// ─── Leaderboard ───
 function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -2055,18 +2381,14 @@ async function loadLeaderboard() {
   if (!el) return;
   el.innerHTML = '<div class="lb-loading">Loading...</div>';
 
-  let q = sb.from('leaderboard').select('display_name,avatar_url,score,guesses_used').eq('won', true);
-  if (lbTab === 'daily') {
-    q = q.eq('mode', 'daily').eq('date', getTodayStr());
-  } else {
-    q = q.eq('mode', 'practice');
-  }
+  let q = sb.from('leaderboard').select('display_name,avatar_url,score,guesses_used').eq('mode', 'daily').eq('won', true);
+  if (lbTab === 'daily') q = q.eq('date', getTodayStr());
   q = q.order('score', { ascending: false }).order('guesses_used', { ascending: true }).limit(10);
 
   const { data, error } = await q;
   if (error || !data) { el.innerHTML = '<div class="lb-empty">Could not load scores.</div>'; return; }
   if (data.length === 0) {
-    el.innerHTML = `<div class="lb-empty">${lbTab === 'daily' ? 'No completions yet today — be first!' : 'No practice scores yet.'}</div>`;
+    el.innerHTML = `<div class="lb-empty">${lbTab === 'daily' ? 'No completions yet today — be first!' : 'No all-time scores yet.'}</div>`;
     return;
   }
 
@@ -2075,9 +2397,8 @@ async function loadLeaderboard() {
     const avatarHtml = row.avatar_url
       ? `<img class="lb-avatar-sm" src="${escHtml(row.avatar_url)}" alt="">`
       : `<div class="lb-initials">${escHtml((row.display_name||'?')[0].toUpperCase())}</div>`;
-    const rc = rankClass[i] || '';
     return `<div class="lb-row">
-      <span class="lb-rank ${rc}">#${i+1}</span>
+      <span class="lb-rank ${rankClass[i]||''}">#${i+1}</span>
       ${avatarHtml}
       <span class="lb-name">${escHtml(row.display_name||'Anonymous')}</span>
       <span class="lb-score-val">${row.score}/20</span>
@@ -2089,7 +2410,7 @@ async function loadLeaderboard() {
 function switchLbTab(tab) {
   lbTab = tab;
   document.getElementById('lb-tab-daily').classList.toggle('active', tab === 'daily');
-  document.getElementById('lb-tab-practice').classList.toggle('active', tab === 'practice');
+  document.getElementById('lb-tab-alltime').classList.toggle('active', tab === 'alltime');
   loadLeaderboard();
 }
 
@@ -2105,6 +2426,10 @@ window.switchMode = switchMode;
 window.signInWithGoogle = signInWithGoogle;
 window.signOut = signOut;
 window.switchLbTab = switchLbTab;
+window.openProfileModal = openProfileModal;
+window.closeProfileModal = closeProfileModal;
+window.saveProfile = saveProfile;
+window.closeSigninRequired = closeSigninRequired;
 
 // Boot
 initAuth();
