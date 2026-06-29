@@ -1030,9 +1030,224 @@ body {
   color: #4aff9a;
 }
 
+/* ─── Profile Button ─── */
+
+.profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 5px 10px 5px 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-bright);
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.profile-btn:hover { border-color: var(--border-glow); background: var(--bg-input); }
+
+.profile-btn-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-btn-chevron {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+
+/* ─── Modals (Profile, Sign-in required) ─── */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  padding: 24px;
+}
+
+.modal-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04);
+  position: relative;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  letter-spacing: -0.2px;
+}
+
+.modal-close-btn {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.modal-close-btn:hover { border-color: var(--glow-blue); color: var(--text-bright); }
+
+.modal-body-text {
+  font-size: 0.83rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modal-cancel-btn {
+  padding: 9px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-cancel-btn:hover { border-color: var(--border-glow); color: var(--text-bright); }
+
+/* ─── Profile Modal specifics ─── */
+
+.profile-avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.profile-avatar-preview {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--border-glow);
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--bg-input);
+}
+
+.profile-field { margin-bottom: 14px; }
+
+.profile-field label {
+  display: block;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.profile-field input {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.83rem;
+  font-family: 'Space Grotesk', sans-serif;
+  color: var(--text-bright);
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.profile-field input:focus { border-color: var(--glow-blue); }
+
+.save-profile-btn {
+  padding: 10px;
+  background: rgba(74,158,255,0.1);
+  border: 1px solid rgba(74,158,255,0.28);
+  border-radius: 8px;
+  color: var(--glow-blue);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.save-profile-btn:hover { background: rgba(74,158,255,0.18); border-color: var(--glow-blue); }
+
+.signout-profile-btn {
+  padding: 9px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.signout-profile-btn:hover { border-color: rgba(255,100,100,0.4); color: #ff9090; }
+
+.profile-status-msg {
+  font-size: 0.73rem;
+  text-align: center;
+  margin-top: 10px;
+  min-height: 1em;
+}
+
+.profile-status-msg.success { color: #4aff9a; }
+
+.profile-status-msg.error { color: #ff6b85; }
+
+/* ─── Overlay score breakdown ─── */
+
+#overlay-score-breakdown {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  letter-spacing: 0.2px;
+}
+
 /* ─── SVG Glow Filters (defined in SVG defs) ─── */
 </style>
-  <script type="module" crossorigin src="/assets/index-C3TAohra.js"></script>
+  <script type="module" crossorigin src="/assets/index-DibD_XTo.js"></script>
 </head>
 <body>
 
@@ -1041,11 +1256,11 @@ body {
   <!-- Auth (top-right) -->
   <div class="landing-auth">
     <div id="auth-user" style="display:none">
-      <div class="auth-user-row">
+      <button class="profile-btn" onclick="openProfileModal()">
         <img id="auth-avatar" class="auth-avatar-img" src="" alt="">
-        <span id="auth-display-name" class="auth-display-name"></span>
-        <button class="auth-btn auth-signout" onclick="signOut()">Sign out</button>
-      </div>
+        <span id="auth-display-name" class="profile-btn-name"></span>
+        <span class="profile-btn-chevron">&#9660;</span>
+      </button>
     </div>
     <button id="auth-signin-btn" class="auth-btn auth-google" onclick="signInWithGoogle()" style="display:none">
       <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -1078,7 +1293,7 @@ body {
         <span class="lb-title">Leaderboard</span>
         <div class="lb-tabs">
           <button class="lb-tab active" id="lb-tab-daily" onclick="switchLbTab('daily')">Today</button>
-          <button class="lb-tab" id="lb-tab-practice" onclick="switchLbTab('practice')">All-time</button>
+          <button class="lb-tab" id="lb-tab-alltime" onclick="switchLbTab('alltime')">All-time</button>
         </div>
       </div>
       <div id="lb-rows" class="lb-rows">
@@ -1166,6 +1381,7 @@ body {
       <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;color:#6b7db0;margin-bottom:4px">Your Score</div>
       <div id="overlay-score-val" style="font-size:2.2rem;font-weight:700;color:#4aff9a;text-shadow:0 0 20px rgba(74,255,154,0.3)">20</div>
       <div id="overlay-score-label" style="font-size:0.78rem;color:#6b7db0;margin-top:2px">out of 20</div>
+      <div id="overlay-score-breakdown"></div>
     </div>
     <button class="play-btn" id="overlay-btn" onclick="newGame()">Play Again</button>
     <button class="play-btn" id="overlay-practice-btn" onclick="switchMode('practice')" style="display:none;margin-top:8px;background:rgba(74,158,255,0.08);border-color:var(--border);color:var(--text-muted);font-size:0.85rem">Practice Mode</button>
@@ -1183,6 +1399,55 @@ body {
           Sign in with Google
         </button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Modal -->
+<div class="modal-overlay" id="profile-modal" style="display:none" onclick="closeProfileModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span class="modal-title">Profile</span>
+      <button class="modal-close-btn" onclick="closeProfileModal()">&#10005;</button>
+    </div>
+    <div class="profile-avatar-section">
+      <img id="profile-avatar-preview" class="profile-avatar-preview" src="" alt="">
+      <div class="profile-field" style="flex:1;margin-bottom:0">
+        <label>Avatar URL</label>
+        <input id="profile-avatar-input" type="url" placeholder="https://...">
+      </div>
+    </div>
+    <div class="profile-field">
+      <label>Display Name</label>
+      <input id="profile-name-input" type="text" placeholder="Your name" maxlength="30">
+    </div>
+    <div class="modal-actions">
+      <button class="save-profile-btn" onclick="saveProfile()">Save Changes</button>
+      <button class="signout-profile-btn" onclick="signOut()">Sign Out</button>
+    </div>
+    <div id="profile-status-msg" class="profile-status-msg"></div>
+  </div>
+</div>
+
+<!-- Sign-in Required Modal (for Daily) -->
+<div class="modal-overlay" id="signin-required-modal" style="display:none" onclick="closeSigninRequired()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span class="modal-title">Sign in required</span>
+      <button class="modal-close-btn" onclick="closeSigninRequired()">&#10005;</button>
+    </div>
+    <p class="modal-body-text">Daily mode tracks your score on the leaderboard and requires a Google account. Practice mode is always available without signing in.</p>
+    <div class="modal-actions">
+      <button class="auth-btn auth-google" style="justify-content:center" onclick="signInWithGoogle()">
+        <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Sign in with Google
+      </button>
+      <button class="modal-cancel-btn" onclick="closeSigninRequired()">Maybe later</button>
     </div>
   </div>
 </div>
