@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="32" fill="#0a0e1a"/>
+  <!-- Mushroom cap -->
+  <ellipse cx="96" cy="80" rx="52" ry="34" fill="#4a9eff" opacity="0.9"/>
+  <!-- Mushroom stem -->
+  <rect x="80" y="108" width="32" height="40" rx="8" fill="#4a9eff" opacity="0.7"/>
+  <!-- Glow spots on cap -->
+  <circle cx="76" cy="72" r="7" fill="#00d4ff" opacity="0.8"/>
+  <circle cx="96" cy="66" r="5" fill="#00d4ff" opacity="0.6"/>
+  <circle cx="114" cy="74" r="6" fill="#00d4ff" opacity="0.7"/>
+  <!-- Gills -->
+  <ellipse cx="96" cy="110" rx="30" ry="6" fill="#0d1225" opacity="0.5"/>
+  <!-- Title text -->
+  <text x="96" y="170" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="700" fill="#e4ecff" letter-spacing="3">SPORDLE</text>
+</svg>

@@ -2,8 +2,25 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Spordle</title>
+
+<!-- PWA / mobile app meta -->
+<meta name="theme-color" content="#0a0e1a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Spordle">
+<meta name="application-name" content="Spordle">
+<meta name="description" content="Fungal phylogeny guessing game — identify the mystery fungus from its evolutionary tree.">
+
+<!-- Icons -->
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+
+<!-- Manifest -->
+<link rel="manifest" href="manifest.json">
+
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
@@ -530,6 +547,43 @@ header .tagline {
     max-height: none;
   }
   .right-panel { min-height: 500px; }
+}
+
+@media (max-width: 540px) {
+  header { padding: 10px 16px 8px; }
+  header h1 { font-size: 2rem; letter-spacing: 2px; }
+  header .tagline { font-size: 0.65rem; }
+
+  .left-panel { padding: 14px 12px; }
+
+  .mode-switcher { margin-bottom: 12px; }
+  .mode-btn { padding: 8px 0; font-size: 0.72rem; }
+
+  .game-title { font-size: 1.1rem; }
+  .game-subtitle { font-size: 0.75rem; }
+
+  .guess-input { padding: 11px 12px; font-size: 0.9rem; }
+  .guess-btn { padding: 11px 14px; font-size: 0.9rem; }
+
+  .hint-btn { padding: 6px 12px; font-size: 0.75rem; }
+  .remaining { font-size: 0.73rem; }
+
+  .right-panel { min-height: 380px; }
+
+  /* Larger touch targets for tree nodes */
+  .node circle { r: 8px; }
+}
+
+/* Safe-area insets for notched phones */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  header {
+    padding-top: calc(14px + env(safe-area-inset-top));
+  }
 }
 
 /* ─── SVG Glow Filters (defined in SVG defs) ─── */
@@ -1482,6 +1536,10 @@ window.addEventListener('resize',()=>{resizeCanvas();if(guesses.length>0||reveal
 // ═══════════════════════════════════════
 initSvg();
 newGame();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+}
 </script>
 </body>
 </html>
