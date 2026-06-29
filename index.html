@@ -631,7 +631,26 @@ body {
   text-align: center;
   max-width: 440px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(74,158,255,0.1);
+  position: relative;
 }
+.overlay-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.overlay-close:hover { border-color: var(--glow-blue); color: var(--text-bright); }
 .overlay-card h2 {
   font-family: 'Quicksand', sans-serif;
   font-size: 1.8rem;
@@ -1207,8 +1226,9 @@ body {
   </div>
 </div>
 
-<div class="game-overlay" id="game-overlay">
-  <div class="overlay-card">
+<div class="game-overlay" id="game-overlay" onclick="closeOverlay()">
+  <div class="overlay-card" onclick="event.stopPropagation()">
+    <button class="overlay-close" onclick="closeOverlay()" title="View tree">&#10005;</button>
     <h2 id="overlay-title"></h2>
     <p id="overlay-text"></p>
     <div id="overlay-score" style="display:none;margin-bottom:16px">
@@ -2489,8 +2509,14 @@ async function saveProfile() {
 
   if (error) { msgEl.textContent = 'Could not save. Try again.'; msgEl.className = 'profile-status-msg error'; return; }
 
+  // Propagate new name/avatar to all existing leaderboard rows for this user
+  await sb.from('leaderboard')
+    .update({ display_name: name, avatar_url: avatar || null })
+    .eq('user_id', currentUser.id);
+
   userProfile = { display_name: name, avatar_url: avatar || null };
   updateAuthDisplay();
+  loadLeaderboard();
   msgEl.textContent = 'Saved!';
   msgEl.className = 'profile-status-msg success';
   setTimeout(() => closeProfileModal(), 900);
@@ -2499,6 +2525,10 @@ async function saveProfile() {
 // ─── Sign-in Required Modal ───
 function closeSigninRequired() {
   document.getElementById('signin-required-modal').style.display = 'none';
+}
+
+function closeOverlay() {
+  document.getElementById('game-overlay').classList.remove('active');
 }
 
 // ─── Score Saving ───
@@ -2585,6 +2615,7 @@ window.openProfileModal = openProfileModal;
 window.closeProfileModal = closeProfileModal;
 window.saveProfile = saveProfile;
 window.closeSigninRequired = closeSigninRequired;
+window.closeOverlay = closeOverlay;
 
 // Boot
 initAuth();
