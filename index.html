@@ -1709,10 +1709,18 @@ function buildMinimalTree(){
       revealedHintDepths.forEach(d=>{if(d>deep)deep=d});
       const mp=mystery[1].slice(0,deep+1);
       revealedHintDepths.forEach(d=>{while(mp.length<=d)mp.push(mystery[1][mp.length])});
-      ins(mp,{text:'???',type:'mystery'});
+      // Insert mystery path and pin each hint-revealed depth so prune() never collapses them
+      let hn=trie;
+      for(let i=1;i<mp.length;i++){
+        const t=mp[i];
+        if(!hn.children[t])hn.children[t]={name:t,rank:i,children:{},leafLabels:[]};
+        hn=hn.children[t];
+        if(revealedHintDepths.has(i))hn.pinned=true;
+      }
+      hn.leafLabels.push({text:'???',type:'mystery'});
     }
   }
-  function prune(n){const ks=Object.keys(n.children);ks.forEach(k=>prune(n.children[k]));if(ks.length===1&&n.leafLabels.length===0){const c=n.children[ks[0]];n.name=c.name;n.rank=c.rank;n.children=c.children;n.leafLabels=c.leafLabels;prune(n)}}
+  function prune(n){const ks=Object.keys(n.children);ks.forEach(k=>prune(n.children[k]));if(ks.length===1&&n.leafLabels.length===0&&!n.pinned){const c=n.children[ks[0]];n.name=c.name;n.rank=c.rank;n.children=c.children;n.leafLabels=c.leafLabels;if(c.pinned)n.pinned=true;prune(n)}}
   prune(trie);
   return trie;
 }
