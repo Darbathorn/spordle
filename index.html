@@ -531,18 +531,59 @@ body {
 
 /* ─── Guess Log ─── */
 .guess-log {
-  padding: 12px 14px;
-  overflow-y: auto;
-  flex: 1;
+  padding: 6px 14px 12px;
+  flex-shrink: 0;
 }
-.guess-log h4 {
+.guess-log-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 6px 2px;
+  cursor: pointer;
+  gap: 8px;
+}
+.guess-log-toggle-label {
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--text-muted);
-  margin-bottom: 8px;
 }
+.guess-log-toggle-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 0.73rem;
+}
+.guess-log-count {
+  background: rgba(74,158,255,0.12);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.guess-log-chevron {
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+.guess-log-toggle.open .guess-log-chevron { transform: rotate(180deg); }
+.guess-log-toggle:hover .guess-log-label,
+.guess-log-toggle:hover .guess-log-chevron { color: var(--text-dim); }
+#log-entries {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.25s ease;
+}
+#log-entries.open { max-height: 600px; }
 .log-entry {
   display: flex;
   justify-content: space-between;
@@ -1191,7 +1232,13 @@ body {
       </div>
 
       <div class="guess-log" id="guess-log" style="display:none">
-        <h4>Your Guesses</h4>
+        <button class="guess-log-toggle" id="guess-log-toggle" onclick="toggleGuessLog()">
+          <span class="guess-log-toggle-label">Your Guesses</span>
+          <span class="guess-log-toggle-meta">
+            <span class="guess-log-count" id="guess-log-count">0</span>
+            <svg class="guess-log-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </button>
         <div id="log-entries"></div>
       </div>
     </div>
@@ -2203,8 +2250,16 @@ function showInfo(t,r,autoOpen){
   if(autoOpen) openInfoModal();
 }
 
+function toggleGuessLog(){
+  const entries=document.getElementById('log-entries');
+  const toggle=document.getElementById('guess-log-toggle');
+  const open=entries.classList.toggle('open');
+  toggle.classList.toggle('open',open);
+}
+
 function addLogEntry(guess){
   document.getElementById('guess-log').style.display='block';
+  document.getElementById('guess-log-count').textContent=guesses.length;
   const entries=document.getElementById('log-entries');
   const div=document.createElement('div');div.className='log-entry';
   div.innerHTML=`<span class="name">${guess.common}</span><span class="lca">${guess.lcaRank}: ${guess.lca}</span>`;
@@ -2293,6 +2348,9 @@ function newGame(){
       document.getElementById('hint-btn').disabled=true;
       document.getElementById('giveup-btn').disabled=true;
       document.getElementById('log-entries').innerHTML='';
+      document.getElementById('log-entries').classList.remove('open');
+      document.getElementById('guess-log-toggle').classList.remove('open');
+      document.getElementById('guess-log-count').textContent='0';
       document.getElementById('guess-log').style.display='none';
       document.getElementById('table-body').innerHTML='';
       document.getElementById('table-overlay').classList.remove('open');
@@ -2324,6 +2382,9 @@ function newGame(){
   document.getElementById('hint-btn').disabled=false;
   document.getElementById('giveup-btn').disabled=false;
   document.getElementById('log-entries').innerHTML='';
+  document.getElementById('log-entries').classList.remove('open');
+  document.getElementById('guess-log-toggle').classList.remove('open');
+  document.getElementById('guess-log-count').textContent='0';
   document.getElementById('guess-log').style.display='none';
   document.getElementById('table-body').innerHTML='';
   document.getElementById('table-overlay').classList.remove('open');
@@ -2616,6 +2677,7 @@ window.closeProfileModal = closeProfileModal;
 window.saveProfile = saveProfile;
 window.closeSigninRequired = closeSigninRequired;
 window.closeOverlay = closeOverlay;
+window.toggleGuessLog = toggleGuessLog;
 
 // Boot
 initAuth();
