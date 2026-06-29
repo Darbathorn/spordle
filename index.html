@@ -695,6 +695,204 @@ body {
   .info-modal-sheet { padding-bottom: calc(32px + env(safe-area-inset-bottom)); }
 }
 
+/* ─── Landing page overflow for leaderboard ─── */
+#landing-page { position: relative; overflow-y: auto; height: auto; min-height: 100vh; }
+.landing-inner { padding-top: 60px; }
+
+/* ─── Auth (Landing) ─── */
+.landing-auth {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.auth-user-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.auth-avatar-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-glow);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.auth-display-name {
+  font-size: 0.78rem;
+  color: var(--text-bright);
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.auth-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.auth-google {
+  background: #fff;
+  color: #3c4043;
+  border: 1.5px solid rgba(255,255,255,0.25);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.35);
+  letter-spacing: 0.2px;
+}
+.auth-google:hover { background: #f1f3f4; box-shadow: 0 2px 10px rgba(0,0,0,0.45); }
+.auth-signout {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: 5px 10px;
+  font-size: 0.7rem;
+}
+.auth-signout:hover { border-color: rgba(255,100,100,0.5); color: #ff9090; }
+
+/* ─── Leaderboard (Landing) ─── */
+.leaderboard-section {
+  margin-top: 36px;
+  width: 100%;
+  max-width: 380px;
+  padding-bottom: 32px;
+}
+.lb-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.lb-title {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.lb-tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--bg-input);
+  border-radius: 6px;
+  padding: 2px;
+  border: 1px solid var(--border);
+}
+.lb-tab {
+  padding: 4px 10px;
+  font-size: 0.68rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.lb-tab.active { background: rgba(74,158,255,0.15); color: var(--glow-blue); }
+.lb-rows { display: flex; flex-direction: column; gap: 4px; }
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+.lb-rank {
+  width: 22px;
+  text-align: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.lb-rank-gold   { color: #ffd700; }
+.lb-rank-silver { color: #b0b8c8; }
+.lb-rank-bronze { color: #cd7f32; }
+.lb-avatar-sm {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.lb-initials {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(74,158,255,0.12);
+  border: 1px solid rgba(74,158,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--glow-blue);
+  flex-shrink: 0;
+}
+.lb-name {
+  flex: 1;
+  color: var(--text-bright);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lb-score-val {
+  font-weight: 700;
+  color: var(--glow-cyan);
+  font-size: 0.82rem;
+  flex-shrink: 0;
+}
+.lb-guesses-val {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.lb-empty, .lb-loading {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+/* ─── Overlay sign-in / saved ─── */
+.overlay-auth-row {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.overlay-auth-msg {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.overlay-saved-msg {
+  font-size: 0.75rem;
+  color: #4aff9a;
+}
+
 /* ─── SVG Glow Filters (defined in SVG defs) ─── */
 </style>
 </head>
@@ -702,6 +900,26 @@ body {
 
 <!-- Landing Page -->
 <div id="landing-page">
+  <!-- Auth (top-right) -->
+  <div class="landing-auth">
+    <div id="auth-user" style="display:none">
+      <div class="auth-user-row">
+        <img id="auth-avatar" class="auth-avatar-img" src="" alt="">
+        <span id="auth-display-name" class="auth-display-name"></span>
+        <button class="auth-btn auth-signout" onclick="signOut()">Sign out</button>
+      </div>
+    </div>
+    <button id="auth-signin-btn" class="auth-btn auth-google" onclick="signInWithGoogle()" style="display:none">
+      <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      Sign in with Google
+    </button>
+  </div>
+
   <div class="landing-inner">
     <h1 class="landing-title"><span class="sp">Sp</span><span class="or">or</span>dle</h1>
     <p class="landing-tagline">Fungal phylogeny guessing game</p>
@@ -714,6 +932,20 @@ body {
         <span class="landing-btn-label">Practice</span>
         <span class="landing-btn-sub">Unlimited puzzles</span>
       </button>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="leaderboard-section">
+      <div class="lb-header">
+        <span class="lb-title">Leaderboard</span>
+        <div class="lb-tabs">
+          <button class="lb-tab active" id="lb-tab-daily" onclick="switchLbTab('daily')">Today</button>
+          <button class="lb-tab" id="lb-tab-practice" onclick="switchLbTab('practice')">All-time</button>
+        </div>
+      </div>
+      <div id="lb-rows" class="lb-rows">
+        <div class="lb-loading">Loading...</div>
+      </div>
     </div>
   </div>
 </div>
@@ -799,10 +1031,31 @@ body {
     </div>
     <button class="play-btn" id="overlay-btn" onclick="newGame()">Play Again</button>
     <button class="play-btn" id="overlay-practice-btn" onclick="switchMode('practice')" style="display:none;margin-top:8px;background:rgba(74,158,255,0.08);border-color:var(--border);color:var(--text-muted);font-size:0.85rem">Practice Mode</button>
+    <div class="overlay-auth-row" id="overlay-auth-row" style="display:none">
+      <div class="overlay-saved-msg" id="overlay-saved-msg" style="display:none">Score saved to leaderboard!</div>
+      <div id="overlay-signin-prompt" style="display:none">
+        <div class="overlay-auth-msg">Sign in to save your score to the leaderboard.</div>
+        <button class="auth-btn auth-google" style="margin-top:8px" onclick="signInWithGoogle()">
+          <svg width="15" height="15" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Sign in with Google
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
-<script>
+<script type="module">
+import { createClient } from '@supabase/supabase-js';
+const sb = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
+
 // ═══════════════════════════════════════
 //  SPECIES DATABASE (same data, compressed)
 // ═══════════════════════════════════════
@@ -1024,6 +1277,7 @@ function goToLanding(){
   closeInfoModal();
   document.getElementById('game-page').style.display='none';
   document.getElementById('landing-page').style.display='flex';
+  loadLeaderboard();
 }
 
 function openInfoModal(){ document.getElementById('info-modal').classList.add('open'); }
@@ -1571,6 +1825,23 @@ function showOverlay(title,html,won){
     btnEl.textContent='New Fungus';
     pracBtnEl.style.display='none';
   }
+
+  // Auth row in overlay
+  const authRow=document.getElementById('overlay-auth-row');
+  const savedMsg=document.getElementById('overlay-saved-msg');
+  const signinPrompt=document.getElementById('overlay-signin-prompt');
+  authRow.style.display='block';
+  savedMsg.style.display='none';
+  signinPrompt.style.display='none';
+  if(currentUser){
+    const score=won?remaining:0;
+    saveScore(gameMode,score,guesses.length,won,gameMode==='daily'?getTodayStr():null).then(saved=>{
+      if(saved){ savedMsg.style.display='block'; }
+    });
+  }else{
+    signinPrompt.style.display='block';
+  }
+
   document.getElementById('game-overlay').classList.add('active');
   updateDailyStatus();
 }
@@ -1602,7 +1873,7 @@ function newGame(){
       document.getElementById('guess-log').style.display='none';
       document.getElementById('table-body').innerHTML='';
       document.getElementById('table-overlay').classList.remove('open');
-      document.getElementById('table-btn').textContent='Show table';
+      document.getElementById('table-btn').textContent='Table';
       showInfo('Fungi',0);
       updateDailyStatus();
       spores=[];
@@ -1685,6 +1956,158 @@ window.addEventListener('resize',()=>{resizeCanvas();if(guesses.length>0||reveal
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
 }
+
+// ═══════════════════════════════════════
+//  AUTH & LEADERBOARD
+// ═══════════════════════════════════════
+let currentUser = null;
+let lbTab = 'daily';
+
+function updateAuthUI(user) {
+  currentUser = user;
+  const userEl = document.getElementById('auth-user');
+  const signinEl = document.getElementById('auth-signin-btn');
+  if (user) {
+    userEl.style.display = 'flex';
+    signinEl.style.display = 'none';
+    const avatarEl = document.getElementById('auth-avatar');
+    const nameEl = document.getElementById('auth-display-name');
+    const avatarUrl = user.user_metadata?.avatar_url;
+    if (avatarUrl) { avatarEl.src = avatarUrl; avatarEl.style.display = 'block'; }
+    else { avatarEl.style.display = 'none'; }
+    nameEl.textContent = user.user_metadata?.full_name || user.user_metadata?.name || user.email || '';
+  } else {
+    userEl.style.display = 'none';
+    signinEl.style.display = 'flex';
+  }
+}
+
+async function initAuth() {
+  const { data: { session } } = await sb.auth.getSession();
+  updateAuthUI(session?.user || null);
+  loadLeaderboard();
+
+  sb.auth.onAuthStateChange((event, session) => {
+    (async () => {
+      const user = session?.user || null;
+      updateAuthUI(user);
+      if (event === 'SIGNED_IN' && user) {
+        await upsertProfile(user);
+        loadLeaderboard();
+      }
+      if (event === 'SIGNED_OUT') loadLeaderboard();
+    })();
+  });
+}
+
+async function upsertProfile(user) {
+  const { error } = await sb.from('profiles').upsert({
+    id: user.id,
+    display_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email,
+    avatar_url: user.user_metadata?.avatar_url || null,
+    updated_at: new Date().toISOString(),
+  }, { onConflict: 'id' });
+  if (error) console.error('Profile upsert:', error.message);
+}
+
+async function signInWithGoogle() {
+  await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin },
+  });
+}
+
+async function signOut() {
+  await sb.auth.signOut();
+}
+
+// Returns true if the score was saved, false if skipped (duplicate daily)
+async function saveScore(mode, score, guessesUsed, won, date) {
+  if (!currentUser) return false;
+  // Prevent duplicate daily entries
+  if (mode === 'daily' && date) {
+    const { data } = await sb.from('leaderboard')
+      .select('id').eq('user_id', currentUser.id).eq('mode', 'daily').eq('date', date)
+      .maybeSingle();
+    if (data) return false;
+  }
+  const displayName = currentUser.user_metadata?.full_name ||
+                      currentUser.user_metadata?.name || currentUser.email || 'Player';
+  const { error } = await sb.from('leaderboard').insert({
+    display_name: displayName,
+    avatar_url: currentUser.user_metadata?.avatar_url || null,
+    mode,
+    score,
+    guesses_used: guessesUsed,
+    won,
+    date: date || null,
+  });
+  if (error) { console.error('Save score:', error.message); return false; }
+  return true;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function loadLeaderboard() {
+  const el = document.getElementById('lb-rows');
+  if (!el) return;
+  el.innerHTML = '<div class="lb-loading">Loading...</div>';
+
+  let q = sb.from('leaderboard').select('display_name,avatar_url,score,guesses_used').eq('won', true);
+  if (lbTab === 'daily') {
+    q = q.eq('mode', 'daily').eq('date', getTodayStr());
+  } else {
+    q = q.eq('mode', 'practice');
+  }
+  q = q.order('score', { ascending: false }).order('guesses_used', { ascending: true }).limit(10);
+
+  const { data, error } = await q;
+  if (error || !data) { el.innerHTML = '<div class="lb-empty">Could not load scores.</div>'; return; }
+  if (data.length === 0) {
+    el.innerHTML = `<div class="lb-empty">${lbTab === 'daily' ? 'No completions yet today — be first!' : 'No practice scores yet.'}</div>`;
+    return;
+  }
+
+  const rankClass = ['lb-rank-gold','lb-rank-silver','lb-rank-bronze'];
+  el.innerHTML = data.map((row, i) => {
+    const avatarHtml = row.avatar_url
+      ? `<img class="lb-avatar-sm" src="${escHtml(row.avatar_url)}" alt="">`
+      : `<div class="lb-initials">${escHtml((row.display_name||'?')[0].toUpperCase())}</div>`;
+    const rc = rankClass[i] || '';
+    return `<div class="lb-row">
+      <span class="lb-rank ${rc}">#${i+1}</span>
+      ${avatarHtml}
+      <span class="lb-name">${escHtml(row.display_name||'Anonymous')}</span>
+      <span class="lb-score-val">${row.score}/20</span>
+      <span class="lb-guesses-val">${row.guesses_used}g</span>
+    </div>`;
+  }).join('');
+}
+
+function switchLbTab(tab) {
+  lbTab = tab;
+  document.getElementById('lb-tab-daily').classList.toggle('active', tab === 'daily');
+  document.getElementById('lb-tab-practice').classList.toggle('active', tab === 'practice');
+  loadLeaderboard();
+}
+
+// Expose onclick functions for non-module HTML attributes
+window.startGame = startGame;
+window.goToLanding = goToLanding;
+window.openInfoModal = openInfoModal;
+window.closeInfoModal = closeInfoModal;
+window.toggleTable = toggleTable;
+window.giveUp = giveUp;
+window.newGame = newGame;
+window.switchMode = switchMode;
+window.signInWithGoogle = signInWithGoogle;
+window.signOut = signOut;
+window.switchLbTab = switchLbTab;
+
+// Boot
+initAuth();
 </script>
 </body>
 </html>
